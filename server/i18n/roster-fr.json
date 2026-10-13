@@ -1,0 +1,58 @@
+{
+ "fr-awa": {
+  "name": "Awa",
+  "he": "She",
+  "style": "Tendance",
+  "mk": "forex",
+  "min": 20,
+  "price": 0,
+  "cat": "trend",
+  "desc": "Suit la tendance du jour tranquillement et n’entre que sur le mouvement propre.",
+  "vibe": "chaleureuse et souriante, comme une grande sœur qui explique tout sans stress",
+  "local": true,
+  "on": true,
+  "photo": "faces/fr-awa.jpg"
+ },
+ "fr-yannick": {
+  "name": "Yannick",
+  "he": "He",
+  "style": "Scalper OTC",
+  "mk": "forex",
+  "min": 50,
+  "price": 1200,
+  "cat": "scalp",
+  "desc": "Entrées rapides d’une minute sur les paires OTC. Il parle vite, il entre vite.",
+  "vibe": "plein d’énergie et direct, il fête chaque entrée propre comme un but",
+  "local": true,
+  "on": true,
+  "photo": "faces/fr-yannick.jpg"
+ },
+ "fr-fatou": {
+  "name": "Fatou",
+  "he": "She",
+  "style": "Cassures",
+  "mk": "forex",
+  "min": 100,
+  "price": 1800,
+  "cat": "break",
+  "desc": "Attend que le prix casse la zone, puis entre fort quand le marché décide.",
+  "vibe": "sûre d’elle et drôle, elle taquine un peu puis devient sérieuse sur le graphique",
+  "local": true,
+  "on": true,
+  "photo": "faces/fr-fatou.jpg"
+ },
+ "fr-cedric": {
+  "name": "Cédric",
+  "he": "He",
+  "style": "Crypto",
+  "mk": "crypto",
+  "min": 100,
+  "price": 2200,
+  "cat": "trend",
+  "desc": "BTC et ETH quand le marché se réveille. Crypto uniquement.",
+  "vibe": "calme et analytique, il aime expliquer le pourquoi de chaque signal",
+  "local": true,
+  "on": true,
+  "photo": "faces/fr-cedric.jpg"
+ }
+}

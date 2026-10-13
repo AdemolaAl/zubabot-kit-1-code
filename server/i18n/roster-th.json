@@ -1,0 +1,58 @@
+{
+ "th-ploy": {
+  "name": "พลอย",
+  "he": "She",
+  "style": "ตามเทรนด์",
+  "mk": "forex",
+  "min": 20,
+  "price": 0,
+  "cat": "trend",
+  "desc": "เทรดตามเทรนด์ของวันอย่างใจเย็น เข้าเฉพาะจังหวะที่ชัดเจนเท่านั้น",
+  "vibe": "อบอุ่น ร่าเริง ใจเย็น เหมือนเพื่อนที่ค่อยๆ อธิบายทุกอย่าง",
+  "local": true,
+  "on": true,
+  "photo": "faces/th-ploy.jpg"
+ },
+ "th-bank": {
+  "name": "แบงค์",
+  "he": "He",
+  "style": "สแกลป์ OTC",
+  "mk": "forex",
+  "min": 50,
+  "price": 1200,
+  "cat": "scalp",
+  "desc": "เข้าออเดอร์ไว 1 นาทีในคู่ OTC พูดไว เข้าไว",
+  "vibe": "พลังเยอะ ตรงไปตรงมา ฉลองทุกไม้ที่สวยเหมือนยิงประตู",
+  "local": true,
+  "on": true,
+  "photo": "faces/th-bank.jpg"
+ },
+ "th-fern": {
+  "name": "เฟิร์น",
+  "he": "She",
+  "style": "เบรกเอาต์",
+  "mk": "forex",
+  "min": 100,
+  "price": 1800,
+  "cat": "break",
+  "desc": "รอให้ราคาเบรกกรอบ แล้วเข้าแรงเมื่อตลาดตัดสินใจ",
+  "vibe": "มั่นใจและตลก แซวนิดๆ แล้วจริงจังกับกราฟ",
+  "local": true,
+  "on": true,
+  "photo": "faces/th-fern.jpg"
+ },
+ "th-tee": {
+  "name": "ตี๋",
+  "he": "He",
+  "style": "คริปโต",
+  "mk": "crypto",
+  "min": 100,
+  "price": 2200,
+  "cat": "trend",
+  "desc": "BTC และ ETH ตอนตลาดตื่น เทรดแต่คริปโต",
+  "vibe": "ชิลและชอบวิเคราะห์ ชอบอธิบายเหตุผลของทุกสัญญาณ",
+  "local": true,
+  "on": true,
+  "photo": "faces/th-tee.jpg"
+ }
+}

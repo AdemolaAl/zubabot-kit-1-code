@@ -1,0 +1,22 @@
+const {chromium}=require('playwright');const crypto=require('crypto');const fs=require('fs');
+function initData(id,name){const p=new URLSearchParams({auth_date:String(Math.floor(Date.now()/1000)),query_id:'Q',user:JSON.stringify({id,first_name:name})});const dcs=[...p.entries()].sort(([a],[b])=>a.localeCompare(b)).map(([k,v])=>`${k}=${v}`).join('\n');const sec=crypto.createHmac('sha256','WebAppData').update('111:TEST').digest();p.set('hash',crypto.createHmac('sha256',sec).update(dcs).digest('hex'));return p.toString()}
+const A='http://127.0.0.1:9950';const H={'Content-Type':'application/json','X-Admin-Key':'ADM'};
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:844},deviceScaleFactor:2});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await ctx.route('https://telegram.org/**',r=>r.abort());
+const ID=initData(8001,'Tobi');
+await ctx.addInitScript(([d])=>{window.Telegram={WebApp:{initData:d,initDataUnsafe:{user:{id:8001,first_name:'Tobi'}},ready(){},expand(){},openLink(u){location.href=u}}};window.speechSynthesis=undefined},[ID]);
+const sh=async n=>p.screenshot({path:`test/x${n}.png`});
+await p.goto('http://127.0.0.1:9951/');await p.waitForTimeout(3300);
+await p.evaluate(()=>{S.ob=9;S.connected=true;S.registered=true;S.name='Tobi';save();go('home')});await p.waitForTimeout(800);
+await p.evaluate(()=>{CTX.zfSnooze=1;S.tourDone=1;});await p.waitForTimeout(9000);await p.evaluate(()=>AIP.chat('mira'));await p.waitForTimeout(5000);await p.screenshot({path:'test/brain0.png'});console.log('ovl',await p.evaluate(()=>document.getElementById('ovl').innerHTML.slice(0,200)));
+await p.evaluate(()=>AIP.ask('mira','how do you trade?'));await p.waitForTimeout(6000);
+let t=await p.evaluate(()=>document.getElementById('apMsgs').innerText);console.log('AI chat ok:',/I ride big trends/.test(t)&&/clean pullback/.test(t));
+await p.evaluate(()=>AIP.ask('mira','send me a signal'));await p.waitForTimeout(6000);
+console.log('unlock card:',await p.evaluate(()=>!!document.querySelector('#apMsgs .ap-cta')));
+await p.screenshot({path:'test/brain1.png'});
+await p.evaluate(()=>{closeOvl();openSupport()});await p.waitForTimeout(4000);
+await p.fill('#sin','Can I start with 20 dollars?');await p.evaluate(()=>supSend());await p.waitForTimeout(6000);
+t=await p.evaluate(()=>document.getElementById('sc').innerText);console.log('support ok:',/\$20 is enough/.test(t),'fund card:',await p.evaluate(()=>!!document.querySelector('#sc .zf-cta button')));
+await p.screenshot({path:'test/brain2.png'});
+const log=await (await fetch('http://127.0.0.1:9961/ailog')).json();console.log('calls',log.length,'persona',/YOU ARE Mira/.test(log[0].system[1].text),'facts',/name: Tobi/.test(log[0].system[1].text));
+console.log('ERR',JSON.stringify(errs));await b.close();process.exit(0)})();

@@ -1,0 +1,58 @@
+{
+ "es-valentina": {
+  "name": "Valentina",
+  "he": "She",
+  "style": "Tendencia",
+  "mk": "forex",
+  "min": 20,
+  "price": 0,
+  "cat": "trend",
+  "desc": "Sigue la tendencia del día con calma y solo entra en el movimiento limpio.",
+  "vibe": "cálida y alegre, como una amiga que te explica todo sin prisa",
+  "local": true,
+  "on": true,
+  "photo": "faces/es-valentina.jpg"
+ },
+ "es-santiago": {
+  "name": "Santiago",
+  "he": "He",
+  "style": "Scalper OTC",
+  "mk": "forex",
+  "min": 50,
+  "price": 1200,
+  "cat": "scalp",
+  "desc": "Entradas rápidas de 1 minuto en los pares OTC. Habla rápido, entra rápido.",
+  "vibe": "enérgico y directo, celebra cada entrada limpia como un gol",
+  "local": true,
+  "on": true,
+  "photo": "faces/es-santiago.jpg"
+ },
+ "es-daniela": {
+  "name": "Daniela",
+  "he": "She",
+  "style": "Rupturas",
+  "mk": "forex",
+  "min": 100,
+  "price": 1800,
+  "cat": "break",
+  "desc": "Espera a que el precio rompa el rango y entra fuerte cuando el mercado decide.",
+  "vibe": "segura y divertida, bromea un poco y luego se pone seria con el gráfico",
+  "local": true,
+  "on": true,
+  "photo": "faces/es-daniela.jpg"
+ },
+ "es-alejandro": {
+  "name": "Alejandro",
+  "he": "He",
+  "style": "Cripto",
+  "mk": "crypto",
+  "min": 100,
+  "price": 2200,
+  "cat": "trend",
+  "desc": "BTC y ETH cuando el mercado despierta. Solo cripto.",
+  "vibe": "tranquilo y analítico, le gusta explicar el porqué de cada señal",
+  "local": true,
+  "on": true,
+  "photo": "faces/es-alejandro.jpg"
+ }
+}

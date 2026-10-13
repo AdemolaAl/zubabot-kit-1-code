@@ -1,0 +1,16 @@
+[Unit]
+Description=Zubabot API
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/zubabot/server
+ExecStart=/usr/bin/node server.js
+Restart=always
+KillSignal=SIGTERM
+TimeoutStopSec=15
+RestartSec=3
+User=zubabot
+Environment=NODE_NO_WARNINGS=1
+
+[Install]
+WantedBy=multi-user.target

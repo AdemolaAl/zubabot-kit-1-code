@@ -1,0 +1,21 @@
+# Caddy gets free HTTPS certificates automatically. Point all four DNS A records (app., api., zubabot.com, www.) at this server first.
+app.zubabot.com {
+	root * /opt/zubabot/web
+	encode zstd gzip
+	file_server
+	try_files {path} /zubabot.html
+	header Cache-Control "no-cache"
+}
+
+api.zubabot.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:8080
+}
+
+# Website + landing pages (zubabot.com/lp1 etc.)
+zubabot.com, www.zubabot.com {
+	root * /opt/zubabot/site
+	file_server
+	try_files {path} {path}.html /index.html
+	header /*.html Cache-Control "no-cache"
+}

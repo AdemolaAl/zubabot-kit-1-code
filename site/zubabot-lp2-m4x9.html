@@ -1,0 +1,515 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script>
+/* ===== CONFIG: edit here ===== */
+window.ZUBA = { telegram: "https://t.me/zubabot?start=lp2", offerEnds: null, slots: 0 };
+/* offerEnds: null = count down to the next live with Roland (10:00, 15:00, 18:00, 22:00 WAT).
+   Set a real end date, e.g. "2026-11-01T23:59:00+01:00", to count down to the end of the free 3 months offer.
+   slots: 0 = hidden. Set a real number (e.g. 25) to show "25 spots left"; it never changes on its own. */
+</script>
+<!-- paste Meta Pixel / TikTok pixel here -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@600;700&display=swap">
+<title>Zubabot Live | Free 3 months</title>
+<meta name="description" content="Top traders go live 4 times a day inside Telegram. Claim your free 3 months of Zubabot.">
+<meta name="theme-color" content="#0B0D18">
+<style>
+:root{
+  --ink:#0B0D18;--ink2:#141828;--ink3:#1E2338;--gold:#FFD21F;--gold2:#FFB300;--amber:#FF8A00;
+  --buy:#14B871;--sell:#F0525E;--tg:#2AABEE;
+  --fd:"Bricolage Grotesque","Plus Jakarta Sans",system-ui,sans-serif;
+  --fb:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fm:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --gut:20px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;overflow-x:hidden}
+body{margin:0;font-family:var(--fb);font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{font-family:var(--fd);font-weight:800;letter-spacing:-.04em;line-height:.94;margin:0;text-wrap:balance}
+p{margin:0}
+.wrap{width:min(1160px,100%);margin:0 auto;padding-inline:var(--gut)}
+:focus-visible{outline:3px solid var(--tg);outline-offset:3px;border-radius:12px}
+
+/* brand */
+.brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--fd);font-weight:800;font-size:19px;letter-spacing:-.03em}
+.zm{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;flex:none}
+.zm svg{width:18px;height:18px}
+.chip{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 13px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--buy);position:relative;flex:none}
+.dot::after{content:"";position:absolute;inset:0;border-radius:50%;background:inherit;animation:ping 1.6s ease-out infinite}
+.dot.red{background:var(--sell)}
+@keyframes ping{to{transform:scale(2.8);opacity:0}}
+
+/* countdown */
+.clock{display:flex;align-items:flex-start;justify-content:center;gap:clamp(5px,1.6vw,10px)}
+.cu{display:flex;flex-direction:column;align-items:center;gap:7px}
+.tile{position:relative;display:flex;padding:0 clamp(7px,2.2vw,12px);border-radius:clamp(14px,4vw,20px);font-family:var(--fm);font-weight:700;font-size:clamp(46px,15vw,66px);line-height:1;overflow:hidden}
+.tile::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;pointer-events:none}
+.d{position:relative;display:block;width:.62em;height:1.3em;overflow:hidden}
+.d i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;will-change:transform}
+.d i.in{animation:dIn .5s cubic-bezier(.2,.9,.25,1) both}
+.d i.out{animation:dOut .5s cubic-bezier(.2,.9,.25,1) both}
+@keyframes dIn{from{transform:translateY(-100%);opacity:.2}to{transform:none;opacity:1}}
+@keyframes dOut{to{transform:translateY(100%);opacity:.2}}
+.cu small{font-family:var(--fm);font-size:10.5px;font-weight:700;letter-spacing:.18em}
+.colon{font-family:var(--fm);font-weight:700;font-size:clamp(34px,10vw,48px);line-height:1;padding-top:.32em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:.25}}
+.clabel{font-family:var(--fm);font-size:11.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;text-align:center;margin-bottom:10px}
+
+/* the one CTA */
+.cta{position:relative;display:flex;align-items:center;gap:14px;width:100%;max-width:440px;min-height:78px;padding:10px 64px 10px 12px;border-radius:999px;cursor:pointer;isolation:isolate;transition:transform .18s ease;user-select:none}
+.cta:active{transform:scale(.97)}
+.cta .tgi{width:54px;height:54px;border-radius:50%;background:var(--tg);display:grid;place-items:center;flex:none;box-shadow:0 6px 16px -6px rgba(42,171,238,.9),inset 0 1px 0 rgba(255,255,255,.35)}
+.cta .tgi svg{width:27px;height:27px;margin-left:-3px}
+.cta .ct{display:flex;flex-direction:column;line-height:1.05;text-align:left}
+.cta .ct small{font-size:14.5px;font-weight:700;opacity:.78;letter-spacing:-.005em}
+.cta .ct b{font-family:var(--fd);font-weight:800;font-size:clamp(25px,7.4vw,29px);letter-spacing:-.035em;margin-top:2px;white-space:nowrap}
+.cta .arr{position:absolute;right:22px;top:50%;width:22px;height:22px;margin-top:-11px;animation:nudge 1.4s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(5px)}}
+.cta::before,.cta::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;animation:ring 2.2s cubic-bezier(.2,.6,.3,1) infinite}
+.cta::after{animation-delay:1.1s}
+@keyframes ring{from{transform:scale(1);opacity:.55}to{transform:scale(1.14,1.5);opacity:0}}
+.cta .shine{position:absolute;inset:0;border-radius:inherit;overflow:hidden;pointer-events:none}
+.cta .shine::before{content:"";position:absolute;top:0;bottom:0;width:40%;left:0;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:translateX(-120%) skewX(-18deg);animation:shine 3.2s ease-in-out infinite}
+@keyframes shine{55%,100%{transform:translateX(330%) skewX(-18deg)}}
+.hand{position:absolute;right:-2px;bottom:-24px;width:58px;height:58px;pointer-events:none;z-index:2;animation:tap 2.2s ease-in-out infinite;transform-origin:30% 20%}
+.hand svg{width:100%;height:100%;filter:drop-shadow(0 6px 8px rgba(0,0,0,.28))}
+.tapfx{position:absolute;right:30px;top:50%;width:44px;height:44px;margin-top:-22px;border-radius:50%;pointer-events:none;opacity:0;animation:tapfx 2.2s ease-out infinite}
+@keyframes tap{0%,100%{transform:translate(10px,14px) rotate(-8deg)}38%{transform:translate(-6px,-4px) rotate(-14deg)}46%{transform:translate(-6px,-1px) rotate(-14deg) scale(.92)}56%{transform:translate(-6px,-4px) rotate(-14deg)}}
+@keyframes tapfx{0%,40%{opacity:0;transform:scale(.4)}46%{opacity:.9;transform:scale(.6)}80%,100%{opacity:0;transform:scale(1.6)}}
+.ctawrap{display:flex;flex-direction:column;align-items:center;width:100%}
+.micro{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 14px;margin-top:16px;font-size:13px;font-weight:600}
+.micro span{display:inline-flex;align-items:center;gap:6px}
+.micro b{font-family:var(--fm)}
+
+/* sticky bar */
+.sticky{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));transform:translateY(120%);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.sticky.on{transform:none}
+.sk{display:flex;align-items:center;gap:12px;max-width:560px;margin:0 auto;padding:8px 8px 8px 16px;border-radius:999px}
+.sk-t{display:flex;flex-direction:column;line-height:1.1;min-width:0}
+.sk-t small{font-size:11px;font-weight:700;opacity:.7;white-space:nowrap}
+.sk-t b{font-family:var(--fm);font-size:17px}
+.sk .cta{min-height:52px;padding:6px 18px 6px 6px;gap:9px;margin-left:auto;width:auto;flex:none}
+.sk .cta .tgi{width:40px;height:40px}.sk .cta .tgi svg{width:20px;height:20px}
+.sk .cta .ct b{font-size:16.5px;margin:0;letter-spacing:-.02em}
+.sk .cta::before,.sk .cta::after{display:none}
+
+/* footer */
+.foot{padding:26px var(--gut) 110px;text-align:center;font-size:12px;line-height:1.5}
+
+/* reveal on scroll (opacity/transform only) */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+  .cta::before,.cta::after,.hand,.tapfx,.cta .shine{display:none}
+  .rv{opacity:1;transform:none}
+}
+
+/* live-now state + offer-only bits */
+.clabel .lvnow{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:6px;background:var(--sell);color:#fff;letter-spacing:.1em}
+.clockbox.is-live .tile{box-shadow:0 0 0 2px var(--sell),0 18px 30px -16px rgba(0,0,0,.6)}
+[data-offeronly]{display:none!important}
+.offer-on [data-offeronly]{display:inline-flex!important}
+.offer-on [data-liveonly]{display:none!important}
+
+/* ===== LP2 · Live room ===== */
+body{background:#0B0D18;color:#fff}
+.bg{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;background:#0B0D18}
+.bg i{position:absolute;border-radius:50%}
+.bg .g1{width:140vmax;height:140vmax;left:50%;top:-30vmax;margin-left:-70vmax;background:radial-gradient(closest-side,rgba(255,196,0,.20),rgba(255,160,0,.06) 55%,transparent);animation:breathe 8s ease-in-out infinite}
+.bg .g2{width:90vmax;height:90vmax;left:-40vmax;bottom:-50vmax;background:radial-gradient(closest-side,rgba(42,171,238,.10),transparent)}
+@keyframes breathe{50%{transform:scale(1.08);opacity:.8}}
+
+.top{display:flex;align-items:center;justify-content:space-between;padding-top:calc(14px + env(safe-area-inset-top,0px))}
+.zm{background:linear-gradient(145deg,#FFE45C,#FFD21F 45%,#FFB300);color:#0B0D18;box-shadow:0 8px 22px -8px rgba(255,190,0,.7),inset 0 1px 0 rgba(255,255,255,.6)}
+.chip.live{background:rgba(240,82,94,.14);border:1px solid rgba(240,82,94,.45);color:#fff}
+.chip.live b{color:#FF7781;letter-spacing:.08em}
+
+.hero{min-height:100svh;display:flex;flex-direction:column}
+.hero .wrap{flex:1;display:flex;flex-direction:column}
+.hgrid{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:16px;padding:16px 0 22px}
+h1{font-size:clamp(44px,12.6vw,58px);text-align:center;color:#fff}
+h1 em{font-style:normal;color:#FFD21F}
+
+/* phone + floating bits */
+.stage{position:relative;display:flex;flex-direction:column;align-items:center}
+.phone{position:relative;height:clamp(250px,47svh,410px);aspect-ratio:585/1266;border-radius:clamp(30px,8vw,40px);padding:6px;background:linear-gradient(160deg,#3A3F55,#11131F 40%,#2A2E40);box-shadow:0 0 0 1px rgba(255,255,255,.12),0 40px 80px -30px rgba(255,170,0,.45),0 30px 60px -20px rgba(0,0,0,.8);animation:float 6s ease-in-out infinite}
+.screen{position:relative;width:100%;height:100%;border-radius:calc(clamp(30px,8vw,40px) - 6px);overflow:hidden;background:#fff}
+.screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0;transform:scale(1.06);transition:opacity .7s ease,transform 3.2s cubic-bezier(.2,.7,.2,1)}
+.screen img.on{opacity:1;transform:none}
+.notch{position:absolute;top:12px;left:50%;width:30%;height:16px;margin-left:-15%;border-radius:20px;background:#0B0D18;z-index:2}
+@keyframes float{50%{transform:translateY(-8px)}}
+.livebadge{position:absolute;top:30px;left:-14px;z-index:3;display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:12px;background:var(--sell);color:#fff;font-weight:800;font-size:12.5px;letter-spacing:.08em;box-shadow:0 12px 24px -10px rgba(240,82,94,.8);transform:rotate(-6deg)}
+.livebadge .dot{background:#fff}
+.flt{position:absolute;z-index:3;display:flex;align-items:center;gap:9px;padding:8px 11px 8px 8px;border-radius:16px;background:rgba(20,24,40,.86);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 18px 36px -16px rgba(0,0,0,.8);white-space:nowrap;opacity:0;transform:scale(.6) translateY(10px);transition:opacity .35s,transform .55s cubic-bezier(.2,1.6,.4,1)}
+.flt.show{opacity:1;transform:none}
+.flt img{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#fff}
+.flt .t{display:flex;flex-direction:column;line-height:1.15}
+.flt .t b{font-family:var(--fd);font-size:14px;letter-spacing:-.02em}
+.flt .t small{font-family:var(--fm);font-size:10.5px;color:#B9BDD0;font-weight:600}
+.pill{font-family:var(--fd);font-weight:800;font-size:12px;letter-spacing:.02em;padding:5px 8px;border-radius:9px;color:#fff}
+.pill.buy{background:var(--buy)}.pill.sell{background:var(--sell)}
+.flt.f1{right:-82px;top:27%}
+.flt.f2{left:-82px;top:55%}
+.stack{display:flex}.stack img{width:26px;height:26px;border:2px solid #141828;margin-left:-8px}.stack img:first-child{margin-left:0}
+
+/* countdown panel overlapping the phone */
+.panel{position:relative;z-index:4;width:100%;max-width:440px;margin-top:-104px;padding:16px 14px 14px;border-radius:28px;background:rgba(17,20,34,.82);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);box-shadow:0 30px 60px -24px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.08)}
+.clabel{color:#D5D8E6}
+.clabel b{color:#FFD21F}
+.tile{background:#1E2338;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 10px 20px -12px rgba(0,0,0,.9)}
+.tile::after{background:rgba(0,0,0,.35)}
+.cu small{color:#9EA3B8}
+.colon{color:#FFD21F}
+.slots4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}
+.sl{height:38px;border-radius:12px;display:grid;place-items:center;font-family:var(--fm);font-weight:700;font-size:13px;color:#D5D8E6;border:1px solid rgba(255,255,255,.14);transition:background .3s,color .3s}
+.sl.done{color:#5E6378;border-color:rgba(255,255,255,.06);text-decoration:line-through}
+.sl.next{background:#FFD21F;color:#0B0D18;border-color:#FFD21F;box-shadow:0 10px 22px -10px rgba(255,190,0,.9)}
+.sl.now{background:var(--sell);color:#fff;border-color:var(--sell)}
+
+/* CTA: gold */
+.cta{background:linear-gradient(135deg,#FFE45C,#FFD21F 50%,#FFB300);color:#0B0D18;box-shadow:0 22px 44px -18px rgba(255,180,0,.9),inset 0 1px 0 rgba(255,255,255,.7)}
+.cta::before,.cta::after{border:2px solid #FFD21F}
+.cta .ct small{opacity:.75}
+.tapfx{border:2px solid rgba(11,13,24,.6)}
+.micro{color:#C9CCDA}
+.micro b{color:#fff}
+.bump{display:inline-block;animation:bump .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes bump{40%{transform:scale(1.35)}}
+
+/* sections */
+.sec{padding:70px 0 8px}
+.kick{font-family:var(--fm);font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;text-align:center;color:#FFD21F}
+h2{font-size:clamp(38px,10.5vw,62px);text-align:center;margin-top:10px;color:#fff}
+.day{max-width:720px;margin:28px auto 0;display:grid;gap:10px}
+.ses{display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:22px;background:#141828;border:1px solid rgba(255,255,255,.08)}
+.ses .tm{font-family:var(--fm);font-weight:700;font-size:26px;letter-spacing:-.02em;min-width:82px;flex:none}
+.ses .nm{flex:1;min-width:0}
+.ses .tm small{font-size:14px;color:#9EA3B8;margin-left:3px}
+.ses .nm{font-family:var(--fd);font-weight:800;font-size:19px;letter-spacing:-.02em;line-height:1.1}
+.ses .nm span{display:block;font-variant-numeric:tabular-nums;font-family:var(--fb);font-weight:600;font-size:13.5px;color:#B9BDD0;letter-spacing:0;margin-top:3px}
+.ses .st{flex:none;margin-left:auto;font-size:12px;font-weight:800;letter-spacing:.06em;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08);color:#C9CCDA;white-space:nowrap}
+.ses.done{opacity:.5}
+.ses.next{background:#FFD21F;color:#0B0D18;border-color:#FFD21F}
+.ses.next .tm small,.ses.next .nm span{color:rgba(11,13,24,.7)}
+.ses.next .st{background:#0B0D18;color:#FFD21F}
+.ses.now{border-color:var(--sell);background:rgba(240,82,94,.12)}
+.ses.now .st{background:var(--sell);color:#fff}
+
+.gets{display:grid;gap:12px;max-width:980px;margin:28px auto 0}
+.get{display:flex;align-items:center;gap:16px;padding:18px;border-radius:24px;background:#fff;color:#0B0D18}
+.get .ic{width:56px;height:56px;border-radius:18px;background:#0B0D18;color:#FFD21F;display:grid;place-items:center;flex:none}
+.get .ic svg{width:28px;height:28px}
+.get b{font-family:var(--fd);font-weight:800;font-size:22px;letter-spacing:-.03em;line-height:1.05;display:block}
+.get span{font-size:14.5px;font-weight:600;color:#4A4F63}
+
+.end{padding:76px 0 10px;text-align:center}
+.end h2{margin-bottom:26px}
+.end .panel{margin:0 auto 26px}
+.foot{color:#9EA3B8}
+.sk{background:rgba(20,24,40,.92);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 40px -16px rgba(0,0,0,.8)}
+.sk-t small{color:#C9CCDA;opacity:1}
+
+@media (min-width:960px){
+  :root{--gut:40px}
+  .hero{min-height:max(100vh,780px)}
+  .hgrid{display:grid;grid-template-columns:1.1fr 1fr;column-gap:56px;align-content:center;align-items:center;padding:30px 0 60px}
+  .lcol{grid-column:1;grid-row:1;display:flex;flex-direction:column;gap:26px}
+  h1{text-align:left;font-size:clamp(74px,7.4vw,100px)}
+  .stage{grid-column:2;grid-row:1}
+  .phone{height:560px}
+  .stage .panel{display:none}
+  .lcol .panel{display:block;margin:0;max-width:520px}
+  .ctawrap{align-items:flex-start}
+  .end .ctawrap{align-items:center}.end .micro{justify-content:center}
+  .micro{justify-content:flex-start}
+  .flt.f1{right:-120px}.flt.f2{left:-130px}
+  .stage{grid-row:1/3}
+  .ctawrap{grid-column:1;grid-row:2}
+  .gets{grid-template-columns:repeat(3,1fr)}
+  .get{flex-direction:column;align-items:flex-start;padding:24px}
+  .day{grid-template-columns:repeat(2,1fr);max-width:980px}
+  .sticky{display:none}
+}
+@media (max-width:959px){ .lcol .panel{display:none} .lcol{display:contents} }
+@media (max-height:760px) and (max-width:959px){ .phone{height:40svh} .panel{margin-top:-80px;padding:12px 12px 10px} .slots4{margin-top:10px} .sl{height:32px} .hgrid{gap:12px;padding-top:10px} }
+@media (prefers-reduced-motion:reduce){ .flt{transition:none} .screen img{transition:none} }
+</style>
+</head>
+<body data-lp="LP2">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="plane" viewBox="0 0 24 24"><path fill="#fff" d="M21.5 3.6 2.9 10.8c-1.3.5-1.3 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.6.1.9.8.9.5 0 .7-.2 1-.5l2.4-2.3 4.9 3.6c.9.5 1.5.2 1.8-.8l3.2-15.2c.3-1.3-.5-1.9-1.9-1.5zM8.3 13.4l9.6-6.1c.5-.3.9-.1.5.2l-8.2 7.4-.3 3.5z"/></symbol>
+<symbol id="z" viewBox="0 0 24 24"><path d="M6 6.5h12l-11 11h11" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="arr" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="hand" viewBox="0 0 24 24"><path fill="#fff" stroke="#0B0D18" stroke-width=".9" stroke-linejoin="round" paint-order="stroke" d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.2 0-.62-.38-1.16-.91-1.38z"/></symbol>
+</svg>
+<div class="bg" aria-hidden="true"><i class="g1"></i><i class="g2"></i></div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="top">
+      <span class="brand"><span class="zm"><svg><use href="#z"/></svg></span>Zubabot</span>
+      <span class="chip live"><span class="dot red"></span><b>LIVE</b> 4× a day</span>
+    </div>
+    <div class="hgrid">
+      <div class="lcol">
+        <h1>Go <em>live</em> with Roland.</h1>
+        <div class="panel"><!--desktop panel-->
+          <div class="clockbox"><div class="clabel">Next live with Roland starts in</div><div class="clock" data-clock="live" role="timer" aria-label="Next live with Roland starts in"><div class="cu"><div class="tile"><span class="d">0</span><span class="d">1</span></div><small>HRS</small></div><b class="colon">:</b><div class="cu"><div class="tile"><span class="d">2</span><span class="d">0</span></div><small>MIN</small></div><b class="colon">:</b><div class="cu"><div class="tile"><span class="d">0</span><span class="d">0</span></div><small>SEC</small></div></div></div>
+          <div class="slots4" data-slots4></div>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="phone" aria-hidden="true">
+          <div class="screen" id="screen">
+            <img class="on" src="img/shot-live.jpg" alt="">
+            <img src="img/shot-room.jpg" alt="" loading="lazy">
+            <img src="img/shot-trade.jpg" alt="" loading="lazy">
+            <img src="img/shot-chat.jpg" alt="" loading="lazy">
+            <img src="img/shot-home.jpg" alt="" loading="lazy">
+          </div>
+          <span class="livebadge"><span class="dot"></span>LIVE</span>
+          <div class="flt f1"><img src="img/zara.jpg" alt=""><span class="t"><b>Zara</b><small>EUR/USD · 1 min</small></span><span class="pill buy">BUY</span></div>
+          <div class="flt f2"><img src="img/roland.jpg" alt=""><span class="t"><b>Roland</b><small>Lead mentor · live 4×/day</small></span></div>
+        </div>
+        <div class="panel">
+          <div class="clockbox"><div class="clabel">Next live with Roland starts in</div><div class="clock" data-clock="live" role="timer" aria-label="Next live with Roland starts in"><div class="cu"><div class="tile"><span class="d">0</span><span class="d">1</span></div><small>HRS</small></div><b class="colon">:</b><div class="cu"><div class="tile"><span class="d">2</span><span class="d">0</span></div><small>MIN</small></div><b class="colon">:</b><div class="cu"><div class="tile"><span class="d">0</span><span class="d">0</span></div><small>SEC</small></div></div></div>
+          <div class="slots4" data-slots4></div>
+        </div>
+      </div>
+
+      <div class="ctawrap lc2">
+        <a class="cta" data-cta data-hero-cta href="https://t.me/zubabot?start=lp2"><span class="shine"></span><span class="tgi"><svg><use href="#plane"/></svg></span><span class="ct"><small>Tap to claim your</small><b>Free 3 months</b></span><svg class="arr"><use href="#arr"/></svg><span class="tapfx"></span><span class="hand"><svg><use href="#hand"/></svg></span></a>
+        <div class="micro"><span data-offeronly>Free 3 months offer ends in <b data-mini="offer">00:00:00</b></span><span data-liveonly>Opens in Telegram · free for 3 months</span><span data-slotwrap style="display:none"><span class="dot"></span><b data-slots>47</b> spots left</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="sec">
+    <div class="wrap">
+      <div class="kick rv">Today · West Africa Time</div>
+      <h2 class="rv">4 lives a day</h2>
+      <div class="day" id="day"></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="kick rv">Free for 3 months</div>
+      <h2 class="rv">What you get</h2>
+      <div class="gets">
+        <div class="get rv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="13" height="14" rx="3"/><path d="M15.5 10l6-3.5v11l-6-3.5"/></svg></span><div><b>Every live session</b><span>Watch Roland trade, follow along</span></div></div>
+        <div class="get rv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg></span><div><b>AI BUY / SELL signals</b><span>From your own AI trader</span></div></div>
+        <div class="get rv"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg></span><div><b>Ask your AI anything</b><span>Chat right inside Telegram</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="end">
+    <div class="wrap">
+      <h2 class="rv">Be in the next live.</h2>
+      <div class="panel">
+        <div class="clockbox"><div class="clabel">Next live with Roland starts in</div><div class="clock" data-clock="live" role="timer" aria-label="Next live with Roland starts in"><div class="cu"><div class="tile"><span class="d">0</span><span class="d">1</span></div><small>HRS</small></div><b class="colon">:</b><div class="cu"><div class="tile"><span class="d">2</span><span class="d">0</span></div><small>MIN</small></div><b class="colon">:</b><div class="cu"><div class="tile"><span class="d">0</span><span class="d">0</span></div><small>SEC</small></div></div></div>
+        <div class="slots4" data-slots4></div>
+      </div>
+      <div class="ctawrap"><a class="cta" data-cta data-end-cta href="https://t.me/zubabot?start=lp2"><span class="shine"></span><span class="tgi"><svg><use href="#plane"/></svg></span><span class="ct"><small>Tap to claim your</small><b>Free 3 months</b></span><svg class="arr"><use href="#arr"/></svg><span class="tapfx"></span><span class="hand"><svg><use href="#hand"/></svg></span></a>
+        <div class="micro"><span data-offeronly>Free 3 months offer ends in <b data-mini="offer">00:00:00</b></span><span data-liveonly>Opens in Telegram · free for 3 months</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="foot">Zubabot is an independent app, not made by IQ Option. Trading involves risk. 18+ only.</footer>
+<div class="sticky"><div class="sk"><div class="sk-t"><small id="skl">Next live with Roland</small><b data-mini="live" data-minilabel="skl">01:20:00</b></div>
+<a class="cta" data-cta href="https://t.me/zubabot?start=lp2"><span class="tgi"><svg><use href="#plane"/></svg></span><span class="ct"><b>Claim free 3 months</b></span></a></div></div>
+
+<script>
+(function(){
+  var Z = window.ZUBA || {}, LP = document.body.getAttribute('data-lp') || 'LP';
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.ZRM = RM;
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+
+  /* ---- real deadlines only: a fixed offer date (if set), otherwise the next live with Roland ---- */
+  var OFFER = Z.offerEnds ? new Date(Z.offerEnds).getTime() : 0;
+  if(isNaN(OFFER)) OFFER = 0;
+  function offerOn(){ return OFFER > Date.now(); }
+  window.ZOfferOn = offerOn;
+
+  /* ---- next live session: 10:00, 15:00, 18:00, 22:00 WAT (UTC+1) ---- */
+  var SLOTS = [10, 15, 18, 22], LIVE_MIN = 50;
+  function liveInfo(){
+    var now = Date.now(), wat = new Date(now + 3600e3);
+    var base = Date.UTC(wat.getUTCFullYear(), wat.getUTCMonth(), wat.getUTCDate()) - 3600e3;
+    var next = null, nextIdx = 0, liveIdx = -1, liveEnd = 0;
+    for(var i = 0; i < SLOTS.length; i++){
+      var s = base + SLOTS[i]*3600e3;
+      if(now >= s && now < s + LIVE_MIN*60e3){ liveIdx = i; liveEnd = s + LIVE_MIN*60e3; }
+      if(s > now && next === null){ next = s; nextIdx = i; }
+    }
+    if(next === null){ next = base + 86400e3 + SLOTS[0]*3600e3; nextIdx = 0; }
+    return { next: next, idx: nextIdx, live: liveIdx, liveEnd: liveEnd, base: base, now: now };
+  }
+  window.ZLive = liveInfo;
+
+  /* ---- rolling digit clock ---- */
+  function setDigit(d, v){
+    if(d._v === v) return;
+    var old = d.lastChild, n = document.createElement('i');
+    n.textContent = v;
+    if(d._v !== undefined && !RM){
+      n.className = 'in';
+      if(old){ old.className = 'out'; setTimeout(function(){ if(old.parentNode) old.parentNode.removeChild(old); }, 520); }
+    } else if(old) d.removeChild(old);
+    d.appendChild(n); d._v = v;
+  }
+  function Clock(el){
+    var ds = el.querySelectorAll('.d');
+    ds.forEach(function(d){ var t = d.textContent.trim(); d.textContent = ''; setDigit(d, t); });
+    var units = el.querySelectorAll('.cu small'), mode = '';
+    return function(ms){
+      var s = Math.max(0, Math.floor(ms/1000)), str, m2;
+      if(s >= 86400){ str = pad(Math.min(99, Math.floor(s/86400))) + pad(Math.floor(s%86400/3600)) + pad(Math.floor(s%3600/60)); m2 = 'd'; }
+      else { str = pad(Math.floor(s/3600)) + pad(Math.floor(s%3600/60)) + pad(s%60); m2 = 'h'; }
+      if(m2 !== mode && units.length === 3){ mode = m2; var u = m2 === 'd' ? ['DAYS','HRS','MIN'] : ['HRS','MIN','SEC']; units.forEach(function(x, i){ x.textContent = u[i]; }); }
+      for(var i = 0; i < 6; i++) setDigit(ds[i], str[i]);
+    };
+  }
+  function fmt(ms){ var s = Math.max(0, Math.floor(ms/1000));
+    if(s >= 86400) return Math.floor(s/86400) + 'd ' + pad(Math.floor(s%86400/3600)) + 'h ' + pad(Math.floor(s%3600/60)) + 'm';
+    return pad(Math.floor(s/3600)) + ':' + pad(Math.floor(s%3600/60)) + ':' + pad(s%60); }
+  window.ZFmt = fmt;
+
+  /* data-clock="main": offer date if set, else next live.  data-clock="live": always the live schedule. */
+  var clocks = [];
+  document.querySelectorAll('[data-clock]').forEach(function(el){
+    var box = el.closest('.clockbox');
+    clocks.push({ kind: el.getAttribute('data-clock'), set: Clock(el), box: box, label: box && box.querySelector('.clabel'), last: '' });
+  });
+  var minis = document.querySelectorAll('[data-mini]');
+  var hooks = window.ZHooks = [];
+  function target(kind, live, now){
+    if(kind === 'offer' || (kind === 'main' && offerOn())) return { t: OFFER, mode: 'offer' };
+    if(live.live > -1) return { t: live.liveEnd, mode: 'now' };
+    return { t: live.next, mode: 'next' };
+  }
+  var LABEL = { offer: 'Free 3 months offer ends in', next: 'Next live with Roland starts in', now: '<b class="lvnow">LIVE NOW</b> with Roland · ends in' };
+  var SHORT = { offer: 'Offer ends in', next: 'Next live with Roland', now: 'LIVE NOW · ends in' };
+  function tick(){
+    var now = Date.now(), live = liveInfo();
+    clocks.forEach(function(c){
+      var g = target(c.kind, live, now);
+      c.set(g.t - now);
+      if(c.last !== g.mode){ c.last = g.mode; if(c.label) c.label.innerHTML = LABEL[g.mode]; if(c.box){ c.box.classList.toggle('is-live', g.mode === 'now'); } }
+    });
+    minis.forEach(function(m){
+      var g = target(m.getAttribute('data-mini'), live, now);
+      m.textContent = fmt(g.t - now);
+      var l = m.getAttribute('data-minilabel') && document.getElementById(m.getAttribute('data-minilabel'));
+      if(l) l.textContent = SHORT[g.mode];
+    });
+    document.documentElement.classList.toggle('offer-on', offerOn());
+    hooks.forEach(function(f){ f(live, now); });
+  }
+  window.ZTick = tick;
+  tick(); setInterval(tick, 250);
+
+  /* ---- optional "spots left": shown only when ZUBA.slots > 0, never changes on its own ---- */
+  var n = parseInt(Z.slots, 10) || 0;
+  document.querySelectorAll('[data-slotwrap]').forEach(function(w){
+    if(n > 0){ w.style.display = ''; w.querySelectorAll('[data-slots]').forEach(function(e){ e.textContent = n; }); }
+    else w.style.display = 'none';
+  });
+
+  /* ---- one CTA everywhere ---- */
+  var url = Z.telegram || 'https://t.me/zubabot?start=lp2';
+  document.querySelectorAll('[data-cta]').forEach(function(a){
+    a.setAttribute('href', url);
+    a.setAttribute('rel', 'noopener');
+    a.addEventListener('click', function(){
+      try{ if(window.fbq) fbq('track', 'Lead', { content_name: LP }); }catch(e){}
+      try{ if(window.ttq) ttq.track('ClickButton'); }catch(e){}
+    });
+  });
+
+  /* ---- sticky CTA after the hero ---- */
+  var sticky = document.querySelector('.sticky'), heroCta = document.querySelector('[data-hero-cta]'), endCta = document.querySelector('[data-end-cta]');
+  if(sticky && heroCta && 'IntersectionObserver' in window){
+    var pastHero = false, endVisible = false;
+    var upd = function(){ sticky.classList.toggle('on', pastHero && !endVisible); };
+    new IntersectionObserver(function(es){ es.forEach(function(e){ pastHero = !e.isIntersecting && e.boundingClientRect.top < 0; }); upd(); }).observe(heroCta);
+    if(endCta) new IntersectionObserver(function(es){ es.forEach(function(e){ endVisible = e.isIntersecting; }); upd(); }).observe(endCta);
+  }
+
+  /* ---- reveal on scroll ---- */
+  var rvs = document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window && !RM){
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -8% 0px' });
+    rvs.forEach(function(r){ io.observe(r); });
+  } else rvs.forEach(function(r){ r.classList.add('in'); });
+})();
+
+</script>
+<script>
+(function(){
+  var RM = window.ZRM, H = [10,15,18,22], LBL = ['10 AM','3 PM','6 PM','10 PM'];
+  var NM = [['Morning live','Start the day right'],['Afternoon live','Fresh setups'],['Evening live','The busy hour'],['Night live','Last call of the day']];
+  var s4 = document.querySelectorAll('[data-slots4]');
+  s4.forEach(function(el){ el.innerHTML = LBL.map(function(l){ return '<span class="sl">'+l+'</span>'; }).join(''); });
+  var day = document.getElementById('day');
+  day.innerHTML = LBL.map(function(l, i){ var p = l.split(' ');
+    return '<div class="ses rv"><span class="tm">'+p[0]+'<small>'+p[1]+'</small></span><span class="nm">'+NM[i][0]+'<span>'+NM[i][1]+'</span></span><span class="st"></span></div>'; }).join('');
+  var rows = day.querySelectorAll('.ses');
+  var lastKey = '';
+  window.ZHooks.push(function(live){
+    var key = live.idx + ':' + live.live + ':' + (live.next - live.now > 0 ? 1 : 0);
+    rows.forEach(function(r, i){
+      var st = r.querySelector('.st');
+      if(i === live.idx){ st.textContent = 'NEXT'; r.querySelector('.nm span').textContent = 'Starts in ' + window.ZFmt(live.next - live.now); }
+      else if(key !== lastKey){
+        var start = live.base + H[i]*3600e3;
+        st.textContent = i === live.live ? 'LIVE NOW' : (start < live.now ? 'DONE' : 'LATER');
+      }
+    });
+    if(key === lastKey) return; lastKey = key;
+    var tomorrow = live.next - live.base >= 86400e3;
+    rows.forEach(function(r, i){
+      var start = live.base + H[i]*3600e3;
+      r.querySelector('.nm span').textContent = NM[i][1];
+      r.className = 'ses rv in ' + (i === live.live ? 'now' : i === live.idx ? 'next' : (start < live.now ? 'done' : ''));
+    });
+    s4.forEach(function(el){ el.querySelectorAll('.sl').forEach(function(c, i){
+      var start = live.base + H[i]*3600e3;
+      c.className = 'sl ' + (i === live.live ? 'now' : i === live.idx ? 'next' : (start < live.now && !tomorrow ? 'done' : ''));
+    }); });
+  });
+  window.ZTick();
+
+  /* app screens loop */
+  var imgs = [].slice.call(document.querySelectorAll('#screen img')), k = 0;
+  if(!RM) setInterval(function(){ imgs[k].classList.remove('on'); k = (k+1) % imgs.length; imgs[k].classList.add('on'); }, 2600);
+
+  /* floating cards */
+  var f = [].slice.call(document.querySelectorAll('.flt'));
+  var SIG = [['zara','Zara','EUR/USD','buy'],['kai','Kai','GBP/USD','sell'],['mira','Mira','BTC/USD','buy'],['jabari','Jabari','USD/JPY','sell'],['yuki','Yuki','ETH/USD','buy']];
+  if(RM){ f.forEach(function(c){ c.classList.add('show'); }); return; }
+  f.forEach(function(c, i){ setTimeout(function(){ c.classList.add('show'); }, 700 + i*600); });
+  var j = 0, c1 = f[0];
+  setInterval(function(){
+    c1.classList.remove('show');
+    setTimeout(function(){ var s = SIG[++j % SIG.length];
+      c1.querySelector('img').src = 'img/' + s[0] + '.jpg'; c1.querySelector('b').textContent = s[1];
+      c1.querySelector('small').textContent = s[2] + ' · 1 min';
+      var p = c1.querySelector('.pill'); p.className = 'pill ' + s[3]; p.textContent = s[3].toUpperCase();
+      c1.classList.add('show'); }, 420);
+  }, 2600);
+})();
+</script>
+</body>
+</html>

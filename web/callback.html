@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Connecting… · Zubabot</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="config.js"></script>
+<style>body{margin:0;font-family:system-ui,sans-serif;background:#F6F6F2;color:#0F1222;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px}
+.s{width:46px;height:46px;border-radius:50%;border:4px solid #E3E3DC;border-top-color:#0F1222;animation:r .8s linear infinite;margin:0 auto 18px}@keyframes r{to{transform:rotate(360deg)}}
+a{display:inline-block;margin-top:18px;background:#FFD21F;color:#0F1222;font-weight:800;padding:14px 22px;border-radius:16px;text-decoration:none}</style></head>
+<body><div><div class="s" id="sp"></div><h2 id="t">Connecting your account…</h2><p id="d">One moment.</p><a id="back" href="#" style="display:none">Back to Zubabot</a></div>
+<script type="module">
+import {finishCallback} from './zubabot-iq.js';
+const BOT_APP = (window.ZB_BOT_APP || 'https://t.me/zubabot/app') + '?startapp=connected';
+const $ = (id) => document.getElementById(id);
+try {
+  await finishCallback();
+  let ret = null; try { ret = sessionStorage.getItem('zb_return') } catch {}
+  if (ret) location.replace(ret.split('#')[0].replace(/[?&]connected=1/, '') + (ret.includes('?') ? '&' : '?') + 'connected=1');   // same Telegram view: straight back
+  else { $('sp').remove(); $('t').textContent = 'Connected ✅'; $('d').textContent = 'Go back to Telegram to continue.'; $('back').href = BOT_APP; $('back').style.display = 'inline-block'; setTimeout(() => location.href = BOT_APP, 800); }
+} catch (e) { $('sp').remove(); $('t').textContent = 'That didn’t work'; $('d').textContent = 'Please go back and tap Connect again.'; $('back').href = BOT_APP; $('back').style.display = 'inline-block'; }
+</script></body></html>

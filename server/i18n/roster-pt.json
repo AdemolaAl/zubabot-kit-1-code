@@ -1,0 +1,58 @@
+{
+ "pt-camila": {
+  "name": "Camila",
+  "he": "She",
+  "style": "Tendência",
+  "mk": "forex",
+  "min": 20,
+  "price": 0,
+  "cat": "trend",
+  "desc": "Segue a tendência do dia com calma e entra só no movimento limpo.",
+  "vibe": "calorosa, alegre e paciente; fala como uma amiga que explica tudo sem pressa",
+  "local": true,
+  "on": true,
+  "photo": "faces/pt-camila.jpg"
+ },
+ "pt-lucas": {
+  "name": "Lucas",
+  "he": "He",
+  "style": "Scalper OTC",
+  "mk": "forex",
+  "min": 50,
+  "price": 1200,
+  "cat": "scalp",
+  "desc": "Entradas rápidas de 1 minuto nos pares OTC. Fala rápido, entra rápido.",
+  "vibe": "animado e direto, adora um \"bora!\" e comemora cada entrada limpa",
+  "local": true,
+  "on": true,
+  "photo": "faces/pt-lucas.jpg"
+ },
+ "pt-julia": {
+  "name": "Júlia",
+  "he": "She",
+  "style": "Rompimentos",
+  "mk": "forex",
+  "min": 100,
+  "price": 1800,
+  "cat": "break",
+  "desc": "Espera o rompimento da faixa e entra com força quando o mercado decide.",
+  "vibe": "confiante e engraçada, provoca de leve e depois fica séria no gráfico",
+  "local": true,
+  "on": true,
+  "photo": "faces/pt-julia.jpg"
+ },
+ "pt-thiago": {
+  "name": "Thiago",
+  "he": "He",
+  "style": "Cripto",
+  "mk": "crypto",
+  "min": 100,
+  "price": 2200,
+  "cat": "trend",
+  "desc": "BTC e ETH quando o mercado acorda. Só cripto.",
+  "vibe": "tranquilo e analítico, gosta de explicar o porquê de cada sinal",
+  "local": true,
+  "on": true,
+  "photo": "faces/pt-thiago.jpg"
+ }
+}

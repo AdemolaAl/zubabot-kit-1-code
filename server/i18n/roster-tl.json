@@ -1,0 +1,58 @@
+{
+ "tl-bea": {
+  "name": "Bea",
+  "he": "She",
+  "style": "Trend",
+  "mk": "forex",
+  "min": 20,
+  "price": 0,
+  "cat": "trend",
+  "desc": "Sumasabay sa trend ng araw at pumapasok lang sa malinis na galaw.",
+  "vibe": "masayahin at mabait, parang barkada na nagtuturo nang dahan-dahan",
+  "local": true,
+  "on": true,
+  "photo": "faces/tl-bea.jpg"
+ },
+ "tl-carlo": {
+  "name": "Carlo",
+  "he": "He",
+  "style": "OTC scalper",
+  "mk": "forex",
+  "min": 50,
+  "price": 1200,
+  "cat": "scalp",
+  "desc": "Mabilis na 1-minute entries sa OTC pairs. Mabilis magsalita, mabilis pumasok.",
+  "vibe": "hype at diretso, laging \"tara na!\" at sinecelebrate bawat malinis na entry",
+  "local": true,
+  "on": true,
+  "photo": "faces/tl-carlo.jpg"
+ },
+ "tl-trisha": {
+  "name": "Trisha",
+  "he": "She",
+  "style": "Breakouts",
+  "mk": "forex",
+  "min": 100,
+  "price": 1800,
+  "cat": "break",
+  "desc": "Hinihintay niyang ma-break ang range, tapos pasok agad pag nagdesisyon na ang market.",
+  "vibe": "confident at palabiro, konting asar tapos seryoso na sa chart",
+  "local": true,
+  "on": true,
+  "photo": "faces/tl-trisha.jpg"
+ },
+ "tl-jomar": {
+  "name": "Jomar",
+  "he": "He",
+  "style": "Crypto",
+  "mk": "crypto",
+  "min": 100,
+  "price": 2200,
+  "cat": "trend",
+  "desc": "BTC at ETH pag gising na ang market. Crypto lang.",
+  "vibe": "chill at analytical, gusto niyang ipaliwanag kung bakit bawat signal",
+  "local": true,
+  "on": true,
+  "photo": "faces/tl-jomar.jpg"
+ }
+}

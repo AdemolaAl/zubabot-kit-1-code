@@ -1,0 +1,12 @@
+<!doctype html><script>window.ZB_API='http://127.0.0.1:9920';window.ZB_SDK_URL='/test/mocksdk.mjs';window.ZB_IQ_CLIENT_ID='77';
+window.Telegram={WebApp:{initData:'x',openLink(u){window.__opened=u}}};</script>
+<script type="module">
+import * as Z from '../web/zubabot-iq.js'; import * as M from '/test/mocksdk.mjs';
+const out={};
+try{
+const d=await Z.detectAccount(); out.detect=d;
+let dep=null; await Z.watchDeposits(x=>dep=x); M._push(350); out.dep=dep;
+out.trade=await Z.placeTrade({pair:'EUR/USD',direction:'sell',amount:10,minutes:1});
+let closed=[]; await Z.onTradeClosed(x=>closed.push(x)); await new Promise(r=>setTimeout(r,150)); out.closed=closed;
+out.log=M._log;}catch(e){console.error('X',e.message,e.stack)} window.__out=out;
+</script>

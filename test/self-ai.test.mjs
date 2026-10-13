@@ -1,0 +1,10 @@
+import http from 'node:http'; import assert from 'node:assert/strict';
+const m = http.createServer(async (req, res) => { let b = ''; for await (const c of req) b += c; const j = JSON.parse(b); assert.equal(req.url, '/v1/chat/completions'); assert.equal(j.messages[0].role, 'system');
+  res.setHeader('content-type', 'application/json'); res.end(JSON.stringify({choices: [{message: {content: 'hi from own server'}}], usage: {prompt_tokens: 10, completion_tokens: 4}})); }).listen(9977);
+process.env.SELF_AI_URL = 'http://127.0.0.1:9977/v1';
+const {makeEngine} = await import('../server/ai-engine.js');
+const {DatabaseSync} = await import('node:sqlite'); const db = new DatabaseSync(':memory:'); const q = (s) => db.prepare(s);
+const S = {ai: {support: {provider: 'self', model: 'qwen3-32b'}, prices: {}}, alerts: {}};
+const E = makeEngine({db, q, now: Date.now, settings: {get: (k) => S[k]}, team: null});
+assert.equal(await E.call('support', [{type: 'text', text: 'sys'}], [{role: 'user', content: 'hey'}]), 'hi from own server'); assert.equal(E.hasKey('self'), true);
+console.log('own AI server OK'); m.close();

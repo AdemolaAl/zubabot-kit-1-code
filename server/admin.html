@@ -1,0 +1,1173 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zubabot Admin</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0D17;--side:#0E1220;--card:#131828;--card2:#1A2033;--line:#242B40;--line2:#1C2234;--ink:#F3F4F8;--dim:#8F95AA;--mute:#6B7189;--sun:#FFD21F;--sun2:#FFE680;--win:#18C98B;--loss:#EF4D57;--blue:#6E9BFF;--amber:#FFB547}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,system-ui,-apple-system,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}a{color:var(--sun)}
+.hide{display:none!important}
+/* shell */
+.shell{display:grid;grid-template-columns:240px minmax(0,1fr);min-height:100vh}
+aside{background:var(--side);border-right:1px solid var(--line2);padding:16px 12px;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 8px 16px}
+.logo{width:36px;height:36px;border-radius:11px;background:var(--sun);display:flex;align-items:center;justify-content:center;flex:none}
+.brand b{font-size:15px;font-weight:800;letter-spacing:-.01em}.brand small{display:block;font-size:11.5px;color:var(--dim);font-weight:600}
+.grp{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);padding:14px 10px 6px}
+.nav{display:flex;align-items:center;gap:10px;border:0;background:none;padding:9px 10px;border-radius:10px;color:#C6CADA;font-weight:600;cursor:pointer;text-align:left;width:100%}
+.nav svg{width:18px;height:18px;flex:none;opacity:.8}.nav:hover{background:#151A2B}.nav.on{background:var(--card2);color:#fff}.nav.on svg{opacity:1;color:var(--sun)}
+.nav .bdg{margin-left:auto;background:var(--loss);color:#fff;font-size:11px;font-weight:800;border-radius:9px;padding:1px 7px;min-width:20px;text-align:center}
+.me{margin-top:auto;padding:12px 10px 4px;border-top:1px solid var(--line2);display:flex;align-items:center;gap:10px;font-size:12.5px}
+.me .av{width:30px;height:30px;border-radius:50%;background:#262E47;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
+main{min-width:0;padding:22px 26px 60px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.top h1{font-size:21px;margin:0;font-weight:800;letter-spacing:-.02em}.top p{margin:2px 0 0;color:var(--dim);font-size:13px}
+.top .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.mob{display:none}
+@media(max-width:900px){.shell{grid-template-columns:1fr}aside{position:fixed;inset:0 30% 0 0;z-index:50;transform:translateX(-102%);transition:.25s;height:100%;box-shadow:20px 0 60px rgba(0,0,0,.5)}aside.open{transform:none}
+  main{padding:14px 14px 70px}.mob{display:inline-flex}}
+.modepill{display:flex;gap:3px;background:var(--card);border:1px solid var(--line);padding:3px;border-radius:12px}
+.modepill button{border:0;background:none;padding:6px 11px;border-radius:9px;font-weight:800;font-size:12px;color:var(--dim);cursor:pointer}
+.modepill button.on[data-m=off]{background:#2A3044;color:#fff}.modepill button.on[data-m=test]{background:var(--blue);color:#0B0E19}.modepill button.on[data-m=live]{background:var(--win);color:#0B0E19}
+/* pieces */
+.grid{display:grid;gap:12px}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:1100px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:760px){.g3,.g2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.card h2,.card h3{font-size:14px;margin:0 0 12px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h2 .hint,.card h3 .hint{font-weight:500}
+.kpi{cursor:default}.kpi small{color:var(--dim);font-weight:700;font-size:12px}.kpi b{display:block;font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi i{font-style:normal;font-size:12px;color:var(--dim)}.kpi.go{cursor:pointer}.kpi.go:hover{border-color:#3A425E}.kpi.alert{border-color:rgba(239,77,87,.55);background:linear-gradient(180deg,rgba(239,77,87,.10),var(--card))}
+label.f{display:block;font-size:12px;font-weight:700;color:var(--dim);margin-bottom:10px}
+label.f input,label.f select,textarea,.inp{display:block;width:100%;margin-top:5px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none}
+.inp{margin-top:0}select.inp{appearance:auto}
+label.f input:focus,textarea:focus,select:focus,.inp:focus{border-color:var(--sun)}
+.hint{font-weight:500;color:var(--mute);font-size:11.5px;margin-top:3px;display:block}
+.dim{color:var(--dim)}
+.btn{border-radius:11px;padding:9px 15px;font-weight:800;cursor:pointer;background:var(--card2);border:1px solid var(--line);white-space:nowrap}
+.btn:hover{border-color:#3A425E}.btn:disabled{opacity:.5;cursor:default}
+.btn.sun{background:var(--sun);color:#0B0E19;border-color:var(--sun)}.btn.win{background:var(--win);color:#0B0E19;border:0}.btn.loss{background:var(--loss);color:#fff;border:0}.btn.ghost{background:none}
+.btn.sm{padding:5px 10px;font-size:12px;border-radius:8px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}th{text-align:left;font-size:11.5px;color:var(--dim);font-weight:700;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px;border-bottom:1px solid var(--line2);font-size:13px;vertical-align:top}tr.click{cursor:pointer}tr.click:hover td{background:#151A2B}
+.tw{overflow-x:auto}
+.tag{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11.5px;font-weight:800;white-space:nowrap}
+.t-buy{background:rgba(24,201,139,.15);color:var(--win)}.t-sell{background:rgba(239,77,87,.15);color:var(--loss)}
+.t-win{background:var(--win);color:#0B0E19}.t-loss{background:var(--loss);color:#fff}.t-open{background:#2A3044;color:#cfd3e2}.t-draw,.t-unresolved{background:#3A3A2A;color:var(--sun)}
+.t-test{background:rgba(110,155,255,.18);color:var(--blue)}.t-live{background:rgba(24,201,139,.18);color:var(--win)}
+.t-waiting{background:rgba(239,77,87,.16);color:#FF8A92}.t-human{background:rgba(255,210,31,.16);color:var(--sun)}.t-ai{background:#232A3E;color:#AEB4C8}.t-closed{background:#1C2234;color:var(--mute)}
+.pairs .pr{display:grid;grid-template-columns:1.2fr .8fr 1fr 1fr 40px;gap:8px;align-items:center;margin-bottom:8px}
+.pairs input,.pairs select{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px;min-width:0}
+.sw{position:relative;width:42px;height:24px;border-radius:12px;background:#2A3044;border:0;cursor:pointer;flex:none}.sw::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}.sw.on{background:var(--win)}.sw.on::after{left:21px}
+.tog{display:flex;align-items:center;gap:10px;font-weight:700;margin-bottom:10px}
+.bar{height:8px;border-radius:5px;background:#232A3E;overflow:hidden}.bar i{display:block;height:100%;background:var(--sun)}
+.note{background:#121A2E;border:1px solid #22304F;border-radius:12px;padding:10px 12px;color:#C8D3EE;font-size:13px}
+pre{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;white-space:pre-wrap;word-break:break-all}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-weight:700;font-size:12.5px;cursor:pointer;color:#C6CADA}
+.chip.on{background:var(--ink);color:#0B0E19;border-color:var(--ink)}.chip b{margin-left:4px;color:var(--loss)}.chip.on b{color:#B4141E}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:#0B0E19;font-weight:800;padding:10px 16px;border-radius:12px;opacity:0;transition:.25s;pointer-events:none;z-index:99;max-width:90vw}
+#toast.on{opacity:1}
+/* setup check */
+.chk{display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid var(--line2)}.chk:first-child{border-top:0}
+.dot{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900}
+.dot.ok{background:rgba(24,201,139,.18);color:var(--win)}.dot.no{background:rgba(239,77,87,.18);color:var(--loss)}.dot.warn{background:rgba(255,181,71,.16);color:var(--amber)}
+.chk b{font-size:13px}.chk span{display:block;font-size:12px;color:var(--dim)}.chk code{font-size:11.5px;color:#C6CADA;background:#1A2033;padding:1px 6px;border-radius:6px}
+/* chart */
+.chart{display:flex;align-items:flex-end;gap:5px;height:120px;padding-top:6px}.chart .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px;min-width:0}
+.chart .c i{display:block;width:100%;border-radius:5px 5px 2px 2px;background:var(--sun);min-height:2px}.chart .c span{font-size:10px;color:var(--mute)}
+/* inbox */
+.ibx{display:grid;grid-template-columns:330px minmax(0,1fr) 260px;gap:12px;height:calc(100vh - 140px);min-height:520px}
+@media(max-width:1250px){.ibx{grid-template-columns:300px minmax(0,1fr)}.ibx .side{display:none}}
+@media(max-width:900px){.ibx{grid-template-columns:1fr;height:auto}.ibx.thread .lst{display:none}.ibx:not(.thread) .th{display:none}}
+.lst,.th,.side{background:var(--card);border:1px solid var(--line);border-radius:16px;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.lst .hd{padding:12px;border-bottom:1px solid var(--line2);display:flex;flex-direction:column;gap:10px}
+.lst .items{overflow-y:auto;flex:1}
+.cv{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;padding:11px 12px;border-bottom:1px solid var(--line2);cursor:pointer}.cv:hover{background:#161C2E}.cv.on{background:#1C2338}
+.av{width:36px;height:36px;border-radius:50%;background:#262E47;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#DDE1EE;flex:none}
+.cv b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cv p{margin:2px 0 0;font-size:12.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cv .meta{text-align:right;font-size:11px;color:var(--mute);display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+.th .hd{padding:12px 14px;border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.th .hd .who{min-width:0;flex:1 1 150px}.th .hd .acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.th .hd .who b{font-size:15px}.th .hd .who span{display:block;font-size:12px;color:var(--dim)}
+.msgs{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:8px}
+.m{max-width:76%;padding:9px 12px;border-radius:14px;font-size:13.5px;white-space:pre-wrap;word-wrap:break-word;position:relative}
+.m small{display:block;font-size:10.5px;font-weight:700;margin-bottom:3px;opacity:.75}
+.m.user{align-self:flex-start;background:#20273C;border-bottom-left-radius:4px}
+.m.ai{align-self:flex-end;background:#1A2D4D;border-bottom-right-radius:4px}
+.m.human{align-self:flex-end;background:var(--sun);color:#16130A;border-bottom-right-radius:4px}
+.m.system{align-self:center;background:none;color:var(--mute);font-size:12px;max-width:90%;text-align:center;padding:2px}
+.m.note{align-self:center;background:rgba(255,181,71,.08);border:1px dashed rgba(255,181,71,.5);color:#FFD9A0;max-width:90%}
+.m .teach{display:block;margin-top:5px;font-size:11.5px;font-weight:700;color:#9FC1FF;cursor:pointer;background:none;border:0;padding:0}
+.m.app::after{content:"in app";position:absolute;top:-7px;right:8px;font-size:9.5px;font-weight:800;background:#2A3350;color:#BFC8E6;border-radius:6px;padding:0 5px}
+.day{align-self:center;font-size:11px;color:var(--mute);font-weight:700;padding:6px 0}
+.cmp{border-top:1px solid var(--line2);padding:10px}
+.cmp textarea{margin:0;resize:vertical;min-height:58px}
+.qr{display:flex;gap:6px;overflow-x:auto;flex-wrap:nowrap;margin-bottom:8px;scrollbar-width:none}.qr .chip{flex:none;padding:4px 10px;font-size:12px}
+.cmp .row{margin-top:8px}
+.banner{margin:10px 14px 0;padding:10px 12px;border-radius:12px;font-size:13px;font-weight:600}
+.banner.wait{background:rgba(239,77,87,.12);color:#FFB3B8}.banner.ai{background:#172036;color:#BFD0F5}.banner.human{background:rgba(255,210,31,.10);color:#FFE38A}
+.side{padding:14px;overflow-y:auto;gap:2px}.side .kv{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--line2);font-size:12.5px}.side .kv span{color:var(--dim)}
+.empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--mute);text-align:center;padding:30px}
+/* drawer */
+.drw{position:fixed;inset:0;background:rgba(5,7,14,.6);z-index:60;display:flex;justify-content:flex-end}
+.drw .pn{width:min(560px,100%);height:100%;background:var(--side);border-left:1px solid var(--line);overflow-y:auto;padding:18px}
+.drw h2{margin:0;font-size:18px}
+.login{max-width:380px;margin:12vh auto;text-align:center}
+.ok{color:var(--win)}.bad{color:var(--loss)}.warn{color:var(--amber)}
+audio{width:100%;margin-top:8px}
+.fn-list{display:block;margin-top:4px}.fn.off{opacity:.55}
+.fn-ic{width:40px;height:40px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}.fn-n{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fn-s{display:block;font-size:12px;margin-top:2px}
+.fn-st{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:12px;padding:10px;background:var(--bg);border-radius:12px}.fn-st b{display:block;font-size:15px;font-variant-numeric:tabular-nums}.fn-st small{display:block;font-size:10.5px;color:var(--dim);line-height:1.2}
+@media(max-width:520px){.fn-st{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.fn-bots{display:grid;gap:8px}.fn-bot{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line2);border-radius:12px}.fn-bot .fl{font-size:22px}.fn-bot b{display:block}.fn-bot .dim{display:block;font-size:12px}
+.f-lbl{font-size:12px;font-weight:700;color:var(--dim);margin:2px 0 6px}.fn-types{display:grid;gap:8px;margin-bottom:12px}.fn-t{display:grid;grid-template-columns:34px 1fr;column-gap:10px;text-align:left;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+.fn-t span{grid-row:span 2;font-size:22px;align-self:center}.fn-t b{font-size:13.5px}.fn-t small{color:var(--dim);font-size:12px}.fn-t.on{border-color:var(--sun);background:rgba(255,210,31,.07)}#fLang,#fAp{margin-bottom:12px}
+.kv2{display:grid;gap:2px;padding:8px 0;border-bottom:1px solid var(--line2)}.kv2 code{font-size:12px;word-break:break-all;color:#C6CADA}
+.lg-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}.lg.live{border-color:rgba(24,201,139,.45)}.lg-f{font-size:30px;line-height:1}.lg-n{display:block;font-size:16px}.lg-s{display:block;font-size:12px;margin-top:2px}
+.m .trn{margin-top:6px;padding-top:6px;border-top:1px dashed rgba(255,255,255,.15);font-size:12px;color:var(--dim)}
+.sc-ev{border:1px solid var(--line2);border-radius:12px;padding:10px 12px;margin-bottom:8px}.sc-ev.block{border-color:rgba(239,77,87,.45)}.sc-why{font-size:12.5px;color:#FFB0B6;margin-top:6px}.sc-tx{margin-top:6px;font-size:13px;background:var(--bg);border-radius:8px;padding:8px;white-space:pre-wrap;word-break:break-word;max-height:160px;overflow:auto}
+.lg-row{padding:10px 0;border-bottom:1px solid var(--line2)}.lg-en{font-size:12.5px;color:var(--dim);margin-bottom:5px}.lg-row textarea{margin-top:0}
+.fn-lg{margin-top:14px}.fn-lgh{display:flex;align-items:center;gap:10px;padding:10px 4px 8px;border-bottom:1px solid var(--line,#2A3044);margin-bottom:10px}.fn-lgh .fl{font-size:22px}.fn-lgh b{font-size:15px;margin-right:6px}.fn-lgh .dim{display:block;font-size:12.5px;margin-top:2px}.fn-lgb{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}.fn-lgb .card{margin:0}
+@media(max-width:520px){.fn-lgb{grid-template-columns:1fr}}
+code{overflow-wrap:anywhere}
+@media(max-width:520px){.row.ea,.row.flb{flex-wrap:wrap!important}.row.ea>b{width:100%!important}.row.ea .ep{flex:1 1 40%!important;max-width:none!important}.row.ea .em{flex:1 1 40%!important}.row.flb .fbl{flex:1 1 100%!important}.row.flb .fba{flex:1 1 50%;width:auto!important;max-width:100%}.row.flb .fbv{flex:1 1 25%;width:auto!important;min-width:0}}
+@media(max-width:760px){.grid.g2[style*=grid-template-columns],.grid.g3[style*=grid-template-columns]{grid-template-columns:1fr!important}}
+</style></head><body>
+<div class="login card" id="login"><div class="logo" style="margin:0 auto 14px;width:56px;height:56px;border-radius:18px"><svg width="34" height="34" viewBox="0 0 120 120"><path d="M20 30 H96 L66 64 L78 54 L44 92 H100" fill="none" stroke="#0B0E19" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+<h2 style="justify-content:center;font-size:19px">Zubabot Admin</h2><p class="dim" style="margin-top:-4px">Open your personal sign-in link, or enter your key.</p>
+<label class="f"><input id="key" type="password" placeholder="Admin key" autocomplete="current-password"></label><button class="btn sun" style="width:100%" onclick="login()">Sign in</button><p id="lerr" class="bad" style="font-weight:700"></p></div>
+
+<div class="shell hide" id="app">
+<aside id="side">
+  <div class="brand"><div class="logo"><svg width="22" height="22" viewBox="0 0 120 120"><path d="M20 30 H96 L66 64 L78 54 L44 92 H100" fill="none" stroke="#0B0E19" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><b>Zubabot</b><small>Admin</small></div></div>
+  <div id="navs"></div>
+  <div class="me"><span class="av" id="meAv">?</span><div style="min-width:0;flex:1"><b id="meName" style="display:block">…</b><span class="dim" id="meRole"></span></div><button class="btn sm ghost" onclick="logout()" title="Sign out">Sign out</button></div>
+</aside>
+<main>
+  <div class="top"><button class="btn sm mob" onclick="$('side').classList.toggle('open')">☰</button><div><h1 id="pgT">Overview</h1><p id="pgS"></p></div>
+    <div class="r"><div class="modepill hide" id="modes" title="Signals mode"><button data-m="off">Off</button><button data-m="test">Test</button><button data-m="live">Live</button></div></div></div>
+
+<!-- OVERVIEW -->
+<section id="t-overview">
+  <div class="grid g4" id="kpis"></div>
+  <div class="grid g2" style="margin-top:12px;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:start">
+    <div class="card"><h2>Last 14 days <span class="hint" id="chLeg"></span><span style="margin-left:auto" class="chips" id="chPick"><span class="chip on" data-k="dep">Deposits</span><span class="chip" data-k="ftd">First deposits</span><span class="chip" data-k="reg">Registrations</span></span></h2><div class="chart" id="chart"></div></div>
+    <div class="card"><h2>Setup check <span class="hint">what’s connected</span></h2><div id="setup"></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card"><h2>Latest money events</h2><div class="tw"><table><tbody id="ovEv"></tbody></table></div></div>
+    <div class="card" id="ovStratCard"><h2>Signals right now</h2><div id="ovStrat"></div></div>
+  </div>
+</section>
+
+<!-- INBOX -->
+<section id="t-inbox" class="hide">
+  <div class="ibx" id="ibx">
+    <div class="lst"><div class="hd"><input class="inp" id="iq" placeholder="Search name, @username, Telegram or IQ ID" oninput="clearTimeout(window._iq);window._iq=setTimeout(loadInbox,300)">
+      <div class="chips" id="iflt"><span class="chip on" data-f="needs">Needs a human<b id="cNeeds"></b></span><span class="chip" data-f="mine">Mine<b id="cMine"></b></span><span class="chip" data-f="human">With team</span><span class="chip" data-f="ai">AI handling</span><span class="chip" data-f="all">All</span></div></div>
+      <div class="items" id="ilist"></div></div>
+    <div class="th" id="ith"><div class="empty">Pick a conversation.<br>Chats that need a person are at the top.</div></div>
+    <div class="side" id="iside"><div class="empty">User details show here.</div></div>
+  </div>
+</section>
+
+<!-- MEMBERS -->
+<section id="t-members" class="hide">
+  <div class="card"><div class="row"><input class="inp" id="mq" style="flex:1;min-width:220px" placeholder="Search name, @username, Telegram ID or IQ Option ID" oninput="clearTimeout(window._mq);window._mq=setTimeout(loadMembers,300)">
+    <div class="chips" id="mseg"><span class="chip on" data-s="all">All</span><span class="chip" data-s="funded">Funded</span><span class="chip" data-s="unfunded">Not funded</span><span class="chip" data-s="notlinked">No IQ account yet</span><span class="chip" data-s="zero">Balance $0</span><span class="chip" data-s="flagged">Flagged</span><span class="chip" data-s="blocked">Blocked</span></div></div>
+    <div class="tw" style="margin-top:12px"><table><thead><tr><th>Name</th><th>Telegram ID</th><th>IQ Option ID</th><th>Deposited</th><th>Coins</th><th>Tokens</th><th>Trades</th><th>Source</th><th>Joined</th><th></th></tr></thead><tbody id="mBody"></tbody></table></div>
+    <div class="row" style="margin-top:10px"><span class="dim" id="mTot"></span><button class="btn sm" style="margin-left:auto" id="mMore" onclick="loadMembers(true)">Load more</button></div></div>
+</section>
+
+<!-- BROADCAST -->
+<section id="t-broadcast" class="hide">
+  <div class="grid g2" style="grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)">
+    <div class="card"><h2>New message</h2>
+      <label class="f">Who gets it<select id="bSeg" onchange="bCount()"></select></label>
+      <label class="f">Only people who came from (optional)<select id="bSrc" onchange="bCount()"><option value="">Any source</option></select><span class="hint">The start link they used, e.g. lp1, ad_tiktok</span></label>
+      <label class="f">Message<textarea id="bText" rows="6" placeholder="Hey {name}! Roland goes live at 6pm today 🔴&#10;||&#10;Come trade along, it’s free."></textarea><span class="hint">{name} = their first name. A line with only || splits it into separate texts sent with a short pause, like a person.</span></label>
+      <label class="f">Button under the message<select id="bCta"><option value="">No button</option><option value="app">🚀 Open Zubabot</option><option value="fund">💳 Fund $… now</option><option value="live">🔴 Join the live</option><option value="academy">🎬 Watch the training</option><option value="coins">🪙 Get coins</option></select></label>
+      <label class="f hide" id="bAmtW">Amount ($)<input id="bAmt" type="number" value="20"></label>
+      <label class="f">Send at (optional)<input id="bAt" type="datetime-local"><span class="hint">Leave empty to send now. Times are your device’s time.</span></label>
+      <div class="row"><b id="bN" class="dim">…</b><span style="margin-left:auto"></span><button class="btn" onclick="bSend(true)">Send a test to me</button><button class="btn sun" onclick="bSend(false)">Send</button></div>
+      <p class="hint">People who sent /stop or are blocked are always skipped. About 15 messages a second go out, so 3,000 people take about 4 minutes.</p></div>
+    <div class="card"><h2>Sent and scheduled</h2><div class="tw"><table><thead><tr><th>When</th><th>To</th><th>Message</th><th>Progress</th><th></th></tr></thead><tbody id="bList"></tbody></table></div></div>
+  </div>
+</section>
+
+<!-- LIVES -->
+<section id="t-lives" class="hide">
+  <div class="grid g2">
+    <div class="card"><h2>Live sessions</h2>
+      <div class="tog"><button class="sw" id="lOn" onclick="this.classList.toggle('on')"></button>Lives are running <span class="hint" style="margin:0">(off = the AIs stop promising times and invites pause)</span></div>
+      <label class="f">Lead mentor<input id="lMentor"></label>
+      <label class="f">Times every day (WAT)<div class="chips" id="lTimes" style="margin-top:6px"></div><div class="row" style="margin-top:8px"><input id="lNew" type="time" class="inp" style="width:140px"><button class="btn sm" onclick="addTime()">+ Add time</button></div></label>
+      <label class="f">Live link (Telegram channel or video)<input id="lLink" placeholder="https://t.me/…"></label>
+      <label class="f">Send the invite how many minutes before<input id="lRem" type="number" min="5" max="180"></label>
+      <label class="f">Stop inviting someone after they ignore … invites in a row<input id="lStop" type="number" min="1" max="10"></label>
+      <button class="btn sun" onclick="saveLives()">Save</button>
+      <p class="hint">The app, the support assistant, the AI traders and the Telegram invites all use these times straight away.</p></div>
+    <div class="card"><h2>What users see</h2><div id="lPrev" class="note"></div></div>
+  </div>
+</section>
+
+<section id="t-strategy" class="hide">
+  <div class="note" style="margin-bottom:12px"><b>How it picks a direction:</b> it reads the trend (fast vs slow moving average on 1-minute prices, or the trend you set by hand), then rolls a weighted coin. <b>Trend bias</b> 0.5 = pure 50/50, 0.7 = 70% of signals go with the trend, 1 = always with the trend. Run it in <b>Test</b>, watch Results, then switch to <b>Live</b>.</div>
+  <div class="grid g3">
+    <div class="card"><h2>Timing</h2>
+      <label class="f">New signal every (seconds, per pair)<input id="everySec" type="number" min="30"><span class="hint">e.g. 180 = up to one signal per pair every ~3 min</span></label>
+      <label class="f">Trade length (minutes)<input id="expiryMin" type="number" min="1" max="15"></label>
+      <label class="f">Max open signals per pair<input id="maxOpenPerPair" type="number" min="1" max="5"></label>
+      <label class="f">Entry lead time (seconds)<input id="leadSec" type="number" min="0" max="300"><span class="hint">time users get before the entry, e.g. 40</span></label>
+      <div class="row"><button class="sw" id="alignMinute" onclick="this.classList.toggle('on')"></button><span style="font-weight:700">Entry on a full minute (14:32:00)</span></div>
+    </div>
+    <div class="card"><h2>Direction</h2>
+      <label class="f">Trend bias (0.5 – 1)<input id="trendBias" type="number" step="0.05" min="0.5" max="1"></label>
+      <label class="f">Fast / slow average (candles)<div class="row" style="gap:6px"><input id="emaFast" type="number" style="flex:1"><input id="emaSlow" type="number" style="flex:1"></div></label>
+      <label class="f">Min gap to call a trend (%)<input id="trendMinPct" type="number" step="0.005"><span class="hint">below this the market counts as flat (50/50)</span></label>
+      <div class="row"><button class="sw" id="skipFlat" onclick="this.classList.toggle('on')"></button><span style="font-weight:700">Skip signals when flat</span></div>
+    </div>
+    <div class="card"><h2>Martingale</h2>
+      <div class="row" style="margin-bottom:10px"><button class="sw" id="mgOn" onclick="this.classList.toggle('on')"></button><span style="font-weight:700">Martingale on</span></div>
+      <label class="f">Steps<input id="mgSteps" type="number" min="1" max="8"></label>
+      <label class="f">Stake multiplier after a loss<input id="mgMult" type="number" step="0.1" min="1" max="5"></label>
+      <div class="row"><button class="sw" id="mgSame" onclick="this.classList.toggle('on')"></button><span style="font-weight:700">Same direction on next step</span></div>
+    </div>
+    <div class="card"><h2>Shown in app</h2>
+      <label class="f">Strength % range<div class="row" style="gap:6px"><input id="confMin" type="number" style="flex:1"><input id="confMax" type="number" style="flex:1"></div><span class="hint">higher when the signal goes with a strong trend</span></label>
+    </div>
+    <div class="card"><h2>Simulation</h2>
+      <label class="f">Payout (0.85 = 85%)<input id="payout" type="number" step="0.01"></label>
+      <label class="f">Simulated stake, step 1 ($)<input id="baseStake" type="number" step="0.5"></label>
+    </div>
+    <div class="card"><h2>Option type</h2><label class="f">Users trade<select id="kind"><option value="digital">Digital (Signal Room)</option><option value="turbo">Turbo</option></select></label></div>
+    <div class="card"><h2>Testers</h2>
+      <label class="f">Telegram user IDs that see Test signals in the app<textarea id="testers" rows="4" placeholder="123456789, 987654321"></textarea><span class="hint">Get an ID from the Members tab after someone opens the app</span></label>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px"><h2>AI traders posting signals <span class="hint" style="margin:0">each AI has its own strategy, pairs and timer. Users pick which AIs they follow in the Signal Room.</span>
+    <span style="margin-left:auto" class="row"><button class="btn sm" onclick="allRandom()">Set all to Random (testing)</button><button class="btn sm sun" onclick="addAi()">+ Add AI</button></span></h2>
+    <div class="note" style="margin-bottom:10px"><b>Auto</b> = picks the AI’s family from how it trades (its style). <b>Momentum</b> = short-term trend up/down with RSI confirming. <b>Reversal</b> = RSI stretched (under 30 / over 70), trade the snap back. <b>Breakout</b> = price breaks the last 20-minute range. These read <b>real prices</b> (crypto from Binance; forex and OTC from Twelve Data with <code>TWELVEDATA_KEY</code>) and only post when the setup is really there, with a one-line reason the AI explains. <b>Random</b> = 50/50, only for testing. <b>Trend bias</b> = the shared Direction settings above. <b>Custom</b> = this AI’s own settings: <b>bias</b> 1 = always with the trend, 0.5 = coin flip, 0 = always against it (reversal); its own averages, minimum gap, skip-flat, and active hours (WAT, e.g. 8-22). <b>Pairs:</b> tick the pairs it trades (as many as you like). None ticked = every pair that is on.</div>
+    <div class="card" style="background:var(--bg);padding:12px;margin-bottom:12px"><div class="row"><button class="sw" id="oOn" onclick="this.classList.toggle('on')"></button><b>Every other AI trader in the app</b><span class="hint" style="margin:0">(<span id="oCount">all</span> AIs not listed below) posts signals too, so every AI is active</span></div>
+      <div class="grid g3" style="margin-top:8px;gap:8px"><label class="f" style="margin:0">Strategy<select id="oStr"><option value="auto">Auto: each AI’s own style (real prices)</option><option value="momentum">Momentum</option><option value="reversal">Reversal</option><option value="breakout">Breakout</option><option value="trend">Trend bias (shared)</option><option value="random">Random (testing)</option></select></label><label class="f" style="margin:0">Every (sec)<input id="oEvery" type="number" min="60"></label><label class="f" style="margin:0">Trade length<select id="oExp"><option value="0">By AI style</option>${''}<option value="1">1 min</option><option value="3">3 min</option><option value="5">5 min</option><option value="15">15 min</option></select></label></div>
+      <div class="tog" style="margin:8px 0 0"><button class="sw" id="oFb" onclick="this.classList.toggle('on')"></button>When a pair has no price data (OTC without a forex price key), keep the AI active with a 50/50 pick</div><p class="hint" style="margin:6px 0 0">Pairs follow each AI’s market: crypto AIs → crypto pairs, the others → the forex / OTC pairs that are on. Add an AI below to give it its own strategy and pairs.</p></div>
+    <div id="aiRows" class="grid g2"></div><datalist id="aiKeys"></datalist>
+    <div class="note" style="margin-top:12px"><b>Signals from outside</b> (another provider, TradingView alerts, Roland’s own tool): set <code>SIGNAL_WEBHOOK_KEY</code> in .env, then send <code>POST /api/signals/webhook?key=…</code> with <code>{"ai":"kai","pair":"EUR/USD OTC","dir":"buy","expiry":1}</code>. Set that AI’s source to <b>Outside only</b> so the built-in strategy stays off for it. The team can also post a signal by hand in Signals.</div></div>
+  <div class="card pairs" style="margin-top:12px"><h2>Pairs <span class="hint" style="margin:0">OTC pairs use <b>Manual</b>: results come from real trades that copied the signal, or you mark W/L. Binance (crypto) and Twelve Data (forex) are scored by price.</span></h2>
+    <div class="pr" style="color:var(--dim);font-size:11.5px;font-weight:700"><span>Pair</span><span>On</span><span>Price source</span><span>Trend</span><span></span></div>
+    <div id="pairs"></div>
+    <button class="btn sm" onclick="addPair()">+ Add pair</button>
+  </div>
+  <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn" onclick="loadStrategy()">Discard changes</button><button class="btn sun" onclick="saveStrategy()">Save strategy</button></div>
+</section>
+<section id="t-signals" class="hide">
+  <div class="grid g3">
+    <div class="card"><h2>Post a signal</h2>
+      <label class="f">Pair<input id="mPair" value="EUR/USD OTC"></label><label class="f">Posted by AI<input id="mAi" placeholder="e.g. luna (blank = first AI)"></label>
+      <div class="row" style="margin-bottom:10px"><button class="btn win" style="flex:1" id="mBuy" onclick="mdir='buy';dirUI()">BUY</button><button class="btn" style="flex:1" id="mSell" onclick="mdir='sell';dirUI()">SELL</button></div>
+      <label class="f">Minutes<input id="mExp" type="number" value="1"></label>
+      <label class="f">Strength %<input id="mConf" type="number" value="85"></label>
+      <label class="f">Mode<select id="mMode"><option value="">Same as current mode</option><option value="test">Test</option><option value="live">Live</option></select></label>
+      <label class="f">Note (optional)<input id="mNote" maxlength="140" placeholder="Roland’s call"></label>
+      <button class="btn sun" style="width:100%" onclick="postSignal()">Send signal</button>
+    </div>
+    <div class="card" style="grid-column:span 2"><h2>Live feed <span class="hint" style="margin:0">refreshes every 5s</span><select id="fMode" style="margin-left:auto;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:5px" onchange="loadSignals()"><option value="">All</option><option value="test">Test</option><option value="live">Live</option></select></h2>
+      <div class="tw"><table><thead><tr><th>#</th><th>AI</th><th>Pair</th><th>Dir</th><th>Step</th><th>Stake</th><th>Trend</th><th>Str.</th><th>Entry → Exit</th><th>Ends</th><th>Result</th></tr></thead><tbody id="sigBody"></tbody></table></div>
+    </div>
+  </div>
+</section>
+<section id="t-results" class="hide">
+  <div class="row" style="margin-bottom:12px"><select id="rMode" class="btn" onchange="loadResults()"><option value="test">Test</option><option value="live">Live</option></select>
+    <select id="rHours" class="btn" onchange="loadResults()"><option value="1">Last hour</option><option value="6">6 hours</option><option value="24" selected>24 hours</option><option value="168">7 days</option><option value="720">30 days</option></select>
+    <button class="btn" style="margin-left:auto" onclick="resetTest()">Clear test data</button></div>
+  <div class="grid g4" id="rKpis"></div>
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card"><h2>By pair</h2><div class="tw"><table><thead><tr><th>Pair</th><th>Signals</th><th>Win rate</th><th>With-trend win rate</th></tr></thead><tbody id="rPairs"></tbody></table></div></div>
+    <div class="card"><h2>Martingale</h2><div id="rMg"></div></div>
+    <div class="card"><h2>By AI</h2><div class="tw"><table><thead><tr><th>AI</th><th>Signals</th><th>Win rate</th></tr></thead><tbody id="rAis"></tbody></table></div></div>
+  </div>
+</section>
+
+<!-- TRAIN -->
+<section id="t-train" class="hide">
+<div class="grid g2">
+<div class="card"><h2>Teach the AIs something new</h2><p class="dim" style="margin:-4px 0 10px">One fact or instruction per note. Every AI trader and the support assistant use it from their very next message. Tip: in the Support inbox, tap “Teach a better answer” under any AI reply.</p>
+<textarea id="kNote" rows="3" placeholder="e.g. This Friday the 6pm live runs 90 minutes."></textarea><div style="margin-top:8px"><button class="btn sun" onclick="addNote()">Save note</button></div>
+<div id="kNotes" style="margin-top:12px"></div></div>
+<div class="card"><h2>Try it</h2><p class="dim" style="margin:-4px 0 10px">Ask what a user would ask. Nothing is sent to anyone.</p>
+<div class="row"><select id="kKind" class="inp" style="width:auto"><option value="support">Support assistant</option><option value="ai">AI trader (Zara)</option></select><label class="dim"><input type="checkbox" id="kFunded"> funded $100</label><label class="dim"><input type="checkbox" id="kZero"> balance $0</label></div>
+<textarea id="kQ" rows="2" style="margin-top:8px" placeholder="e.g. I deposited but the app is still locked"></textarea><div style="margin-top:8px"><button class="btn" onclick="tryAI()">Ask</button></div><div id="kA" style="margin-top:10px;white-space:pre-wrap"></div></div>
+</div>
+<div class="card" style="margin-top:12px"><h2>Pictures the AI can send <span class="hint">e.g. when someone asks “Is IQ Option legit?” the AI attaches <b>iqoption</b>. Replace it with your own screenshot any time.</span></h2>
+<div class="row"><input class="inp" id="pfName" value="iqoption" style="width:160px"><input type="file" id="pfFile" accept="image/jpeg,image/png,image/webp"><button class="btn sun" onclick="upProof()">Upload</button></div><div id="pfList" class="row" style="margin-top:10px"></div></div>
+<div class="card" style="margin-top:12px"><h2>Knowledge files <span class="hint">the full playbook the AIs read (a backup is kept on every save)</span></h2>
+<select id="kFile" class="inp" onchange="showFile()"></select><textarea id="kText" rows="18" style="margin-top:8px;font:12.5px/1.5 ui-monospace,Menlo,monospace"></textarea><div style="margin-top:8px" class="row"><button class="btn sun" onclick="saveFile()">Save file</button><span class="dim" id="kInfo"></span></div></div>
+</section>
+
+<!-- ENGINE -->
+<section id="t-engine" class="hide">
+  <div class="grid g4" id="eK"></div>
+  <div class="card" id="eNews" style="margin-top:12px"></div>
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card"><h2>Which AI answers</h2><p class="hint" style="margin:-6px 0 10px">Pick the AI company and model for each part. If it fails, the backup answers. A ✓ means its key is in the server’s .env.</p><div id="eAreas"></div>
+      <div class="row" style="margin-top:6px"><button class="btn sun" onclick="saveEngine()">Save</button><span class="hint" style="margin:0">Changes apply to the next message.</span></div></div>
+    <div class="card"><h2>Limits</h2>
+      <label class="f">Daily AI + voice budget ($)<input id="eBudget" type="number" step="1"><span class="hint">When reached, chats use the built-in answers and hand hard cases to the team. You get an alert at 80%.</span></label>
+      <div class="grid g3"><label class="f">Messages / day: not funded<input id="eCapFree" type="number"></label><label class="f">Messages / day: funded<input id="eCapPaid" type="number"></label><label class="f">Telegram chat / day<input id="eCapTg" type="number"></label></div>
+      <button class="btn sun" onclick="saveEngine()">Save limits</button>
+      <h3 style="margin-top:18px">Spend, last 7 days</h3><div class="chart" id="eChart" style="height:90px"></div>
+      <div class="tw" style="margin-top:10px"><table><thead><tr><th>Day</th><th>Part</th><th>Company</th><th>Model</th><th>Calls</th><th>Fails</th><th>$</th></tr></thead><tbody id="eSpend"></tbody></table></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card"><h2>Voice calls <span class="hint" id="vSum"></span></h2>
+      <div id="vServers"></div>
+      <div class="tog" style="margin-top:10px"><button class="sw" id="vOn" onclick="this.classList.toggle('on')"></button>Voice calls on</div>
+      <div class="grid g2"><label class="f">Listening, in order<input id="vStt"><span class="hint">self = our voice server · openai · deepgram · elevenlabs</span></label>
+        <label class="f">Standard voice (1 token/min)<input id="vStd"><span class="hint">self · openai · elevenlabs · google</span></label>
+        <label class="f">Premium voice (4 tokens/min)<input id="vPrem"><span class="hint">usually elevenlabs, then self</span></label>
+        <label class="f">Premium voice from ($ deposited)<input id="vPremFrom" type="number"></label>
+        <label class="f">Calls with AI traders from ($)<input id="vFrom" type="number"></label>
+        <label class="f">Max calls at the same time<input id="vMax" type="number"><span class="hint">When full, leads are asked to chat by text; funded users always get through.</span></label></div>
+      <div class="grid g3"><label class="f">Call minutes a day per person<input id="vDay" type="number"></label><label class="f">Call minutes a day for MAX ($2,000+)<input id="vDayMax" type="number"></label><label class="f">Premium-voice minutes a day<input id="vPremDay" type="number"><span class="hint">After these, the call carries on in the standard voice.</span></label></div>
+      <h3>Voices</h3>
+      <div class="grid g3"><label class="f">Women (own server)<input id="vDs"></label><label class="f">Women (OpenAI)<input id="vDo"></label><label class="f">Women (ElevenLabs ID)<input id="vDe"></label>
+        <label class="f">Men (own server)<input id="vMs"></label><label class="f">Men (OpenAI)<input id="vMo"></label><label class="f">Men (ElevenLabs ID)<input id="vMe"></label></div>
+      <label class="f">A voice for one AI (optional, one per line)<textarea id="vPer" rows="3" placeholder="luna: self=af_heart, elevenlabs=EXAVITQu4vr4xnSDxMaL&#10;viza: self=bf_emma"></textarea></label>
+      <div class="row"><button class="btn sun" onclick="saveVoice()">Save voice settings</button><input class="inp" id="vTxt" style="flex:1;min-width:180px" value="Heyyy! Zara here. Ready to take the next signal together?"><select id="vTier" class="inp" style="width:auto"><option value="standard">Standard</option><option value="premium">Premium</option></select><button class="btn" onclick="testVoice()">▶ Play a test voice</button></div>
+      <audio id="vAudio" controls class="hide"></audio></div>
+    <div class="card"><h2>Recent calls</h2><div class="tw"><table><thead><tr><th>When</th><th>Who</th><th>AI</th><th>Type</th><th>Voice</th><th>Length</th><th>Tokens</th><th>$</th></tr></thead><tbody id="vCalls"></tbody></table></div></div>
+  </div>
+</section>
+
+<!-- SALES -->
+<section id="t-sales" class="hide">
+  <div class="grid g4" id="slK"></div>
+  <div class="grid g2" style="margin-top:12px;align-items:start">
+    <div class="card"><h2>Moments <span class="hint">each message is written by the user’s own AI with their real numbers. It goes to the app (a preview pops in) and Telegram.</span></h2>
+      <div class="tog"><button class="sw" id="slOn" onclick="this.classList.toggle('on')"></button>Sales engine on</div>
+      <label class="f">Max sales messages per person per day<input id="slMax" type="number" min="0" max="6"></label><label class="f">Max per person per week<input id="slWeek" type="number" min="0" max="20"><span class="hint">If someone ignores 3 in a row, the AIs go quiet for them for a week.</span></label>
+      <div id="slMoments"></div>
+      <button class="btn sun" onclick="saveSales()">Save</button> <button class="btn" onclick="runSales()">Check everyone now</button>
+      <p class="hint">Never during quiet hours (Settings), never after /stop, not while a teammate has the chat, and nothing after a loss. The deposit is always called their own trading capital; no profit promises.</p></div>
+    <div class="card"><h2>Results <span class="hint">last 14 days · “deposited” = they deposited within 48 hours of the message</span></h2><div class="tw"><table><thead><tr><th>Moment</th><th>Sent</th><th>Opened in app</th><th>Deposited</th><th>$ deposited</th></tr></thead><tbody id="slStats"></tbody></table></div>
+      <h3 style="margin-top:16px">Levels it sells</h3><div id="slLv" class="note"></div></div>
+  </div>
+  <div class="card" style="margin-top:12px"><h2>Latest messages</h2><div class="tw"><table><thead><tr><th>When</th><th>To</th><th>From</th><th>Moment</th><th>Message</th><th>Button</th><th>Opened</th></tr></thead><tbody id="slRecent"></tbody></table></div></div>
+</section>
+
+<!-- INVITES -->
+<section id="t-invites" class="hide">
+  <div class="grid g3" id="rK"></div>
+  <div class="grid g2" style="margin-top:12px">
+    <div class="card"><h2>Top inviters</h2><div class="tw"><table><thead><tr><th>Name</th><th>Invited</th><th>Funded</th><th>Coins earned</th></tr></thead><tbody id="rTop"></tbody></table></div></div>
+    <div class="card"><h2>Earlier members</h2><p class="hint" style="margin-top:-6px">Paste IQ Option IDs of people who registered with your link before (from Affstore). They can then claim their account in the app.</p>
+      <textarea id="impIds" rows="4" placeholder="196641001, 196641002 …"></textarea><button class="btn sun" style="margin-top:8px" onclick="importIds()">Import IDs</button>
+      <h3 style="margin-top:18px">Invite codes</h3><div class="row"><input class="inp" id="invN" type="number" value="10" style="width:90px"><input class="inp" id="invNote" placeholder="note, e.g. old members" style="flex:1"><button class="btn" onclick="makeInvites()">Create codes</button></div><pre id="invOut" class="hide"></pre></div>
+  </div>
+</section>
+
+<!-- FUNNELS & BOTS -->
+<section id="t-funnels" class="hide">
+  <div class="grid g4" id="fnK"></div>
+  <div class="row" style="margin-top:14px"><div class="chips" id="fnLang"></div><span style="margin-left:auto"></span><button class="btn sun fn-own" onclick="fnNew()">+ New funnel</button></div>
+  <div id="fnList" class="fn-list"></div>
+  <div class="card fn-own" style="margin-top:14px"><h2>Bots <span class="hint">every bot runs on this one server: same users, deposits, signals and team. Give each one a language.</span></h2>
+    <div id="fnBots" class="fn-bots"></div>
+    <h3 style="margin-top:14px">Connect a bot</h3>
+    <div class="row"><input class="inp" id="bTok" placeholder="Paste the token from @BotFather (123456:ABC…)" style="flex:1;min-width:220px"><select class="inp" id="bLang" style="width:auto"></select><button class="btn sun" onclick="botAdd()">Connect</button></div>
+    <p class="hint">After connecting: in @BotFather send /newapp for that bot with the web app link shown, so its mini app opens in the right language.</p><pre id="bNext" class="hide"></pre></div>
+</section>
+
+<!-- LANGUAGES -->
+<section id="t-languages" class="hide">
+  <div class="note">English is the main launch. Each other language has its own support name, its own lead mentor (Roland is English only) and its own funnels. The AI traders are the same and speak the language. Switch a language on when you're happy with it: preview it first with the Preview button.</div>
+  <div id="lgList" class="lg-list" style="margin-top:12px"></div>
+</section>
+
+<!-- SECURITY -->
+<section id="t-security" class="hide">
+  <div class="grid g4" id="scK"></div>
+  <div class="grid g2" style="margin-top:12px;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:start">
+    <div class="card"><h2>Flagged messages <span class="hint">blocked ones never reached the user</span></h2><div class="chips" id="scF" style="margin-bottom:10px"><span class="chip on" data-k="open">To review</span><span class="chip" data-k="confirmed">Confirmed</span><span class="chip" data-k="ok">Marked OK</span><span class="chip" data-k="all">All</span></div><div id="scList"></div></div>
+    <div>
+      <div class="card"><h2>Affiliate IDs <span class="hint">only these can appear in sign-up links. Only the owner can change them; every admin is emailed when they change.</span></h2>
+        <div class="row"><input class="inp" id="scAff" style="flex:1"><button class="btn sun" id="scAffB" onclick="scSave({affIds:$('scAff').value})">Save</button></div></div>
+      <div class="card" style="margin-top:12px"><h2>Rules</h2>
+        <div class="tog"><button class="sw" id="scOn" onclick="this.classList.toggle('on');scSave({on:this.classList.contains('on')})"></button>Security checks on</div>
+        <div class="tog"><button class="sw" id="scBl" onclick="this.classList.toggle('on');scSave({block:this.classList.contains('on')})"></button>Block wrong affiliate links, other brokers and foreign wallets (otherwise only flag)</div>
+        <div class="tog"><button class="sw" id="scRm" onclick="this.classList.toggle('on');scSave({removeInChannels:this.classList.contains('on')})"></button>Also delete blocked posts in watched channels and groups</div>
+        <label class="f">Our own Telegram accounts and channels (never flagged)<input id="scH" placeholder="zubabot, zubabot_support, rolandlive"></label>
+        <label class="f">Our own websites<input id="scD" placeholder="zubabot.com"></label>
+        <label class="f">Trusted wallets (owner only)<input id="scW" placeholder="T… / bc1…"></label>
+        <label class="f">Security alerts group (Telegram chat id)<input id="scG" placeholder="-100…"><span class="hint">Add the main bot to a private group, send a message, and paste the group id. Empty = the support team group.</span></label>
+        <button class="btn sun" onclick="scSave({handles:$('scH').value,domains:$('scD').value,groupId:$('scG').value})">Save</button> <button class="btn" onclick="scSave({wallets:$('scW').value})">Save wallets</button></div>
+      <div class="card" style="margin-top:12px"><h2>Try a message</h2><textarea id="scT" rows="3" placeholder="Paste a message to see what the check says"></textarea><button class="btn" style="margin-top:8px" onclick="scTest()">Check</button><pre id="scTo" class="hide"></pre></div>
+      <div class="card" style="margin-top:12px"><h2>Watched channels & groups <span class="hint">add any bot as admin to a channel or group: every post and edit is checked</span></h2><div id="scWatch" class="dim">None yet.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="t-team" class="hide">
+  <div class="grid g2" style="grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);align-items:start">
+    <div class="card"><h2>Team</h2><div class="tw"><table><thead><tr><th>Name</th><th>Role</th><th>Alerts</th><th>Last seen</th><th>Active</th><th></th></tr></thead><tbody id="tBody"></tbody></table></div>
+      <h3 style="margin-top:16px">Add a teammate</h3><div class="row"><input class="inp" id="tName" placeholder="Name" style="flex:1;min-width:140px"><select class="inp" id="tRole" style="width:auto" onchange="$('tSubs').classList.toggle('hide',this.value!=='buyer')"></select><input class="inp hide" id="tSubs" placeholder="their sub-IDs, e.g. joe, joe2" style="width:190px"><button class="btn sun" onclick="addMember()">Create sign-in link</button></div><span class="hint">Media buyers only see Funnels, and only the numbers for their own sub-IDs.</span>
+      <div id="tNew" class="note hide" style="margin-top:10px"></div></div>
+    <div class="card"><h2>What each role can open</h2><div class="tw"><table id="tRoles"></table></div></div>
+  </div>
+  <div class="card" style="margin-top:12px"><h2>Activity <select class="inp" id="aWho" style="width:auto;margin-left:auto" onchange="loadActivity()"><option value="">Everyone</option></select></h2><div class="tw"><table><thead><tr><th>When</th><th>Who</th><th>What</th><th>Details</th></tr></thead><tbody id="aBody"></tbody></table></div></div>
+</section>
+
+<!-- ALERTS -->
+<section id="t-alerts" class="hide">
+  <div class="grid g2">
+    <div class="card"><h2>My alerts</h2><p class="hint" style="margin-top:-6px">Pick what you want to hear about. Alerts come to your own Telegram chat with the Zubabot bot. Reply to an alert about a user to answer them directly.</p>
+      <div id="alList"></div>
+      <h3 style="margin-top:14px">Telegram</h3><div id="alTg"></div>
+      <h3 style="margin-top:14px">My name (users see it when you take over a chat)</h3><input class="inp" id="alName" placeholder="e.g. Grace"><h3 style="margin-top:14px">Email (optional)</h3><div class="row"><input class="inp" id="alEmail" placeholder="you@email.com" style="flex:1"><label class="dim"><input type="checkbox" id="alEmailOn"> also by email</label></div>
+      <div class="row" style="margin-top:12px"><button class="btn sun" onclick="saveAlerts()">Save</button><button class="btn" onclick="testAlert()">Send me a test alert</button></div></div>
+    <div class="card"><h2>How it works</h2><div class="note">1. Tick the alerts you want and press Save.<br>2. Press <b>Connect Telegram</b> and tap Start in the bot.<br>3. When a user asks for a human you get a message with a <b>Take over</b> button. Reply to it in Telegram and your reply goes to the user, or open the inbox here.</div></div>
+  </div>
+</section>
+
+<!-- SETTINGS -->
+<section id="t-settings" class="hide">
+  <div class="grid g2">
+    <div class="card"><h2>Support assistant &amp; hand-offs</h2>
+      <label class="f">Assistant’s name<input id="sName"></label>
+      <div class="tog"><button class="sw" id="sIntro" onclick="this.classList.toggle('on')"></button>Say “Hi, I’m … from the support team” when a teammate takes over</div>
+      <div class="tog"><button class="sw" id="sRate" onclick="this.classList.toggle('on')"></button>Ask “Is everything sorted? 👍 👎” when a chat is closed</div>
+      <div class="grid g3"><label class="f">Remind the team after (min)<input id="sSla" type="number"></label><label class="f">AI helps again if nobody answers in (min)<input id="sBack" type="number"></label><label class="f">Quiet human chats go back to AI after (hours)<input id="sIdle" type="number"></label></div>
+      <label class="f">Words that send a user straight to a human<input id="sWords"><span class="hint">comma separated. Users can also type /human.</span></label>
+      <button class="btn sun" onclick="saveSupport()">Save</button></div>
+    <div class="card"><h2>Follow-ups &amp; alerts</h2>
+      <div class="tog"><button class="sw" id="fOn" onclick="this.classList.toggle('on')"></button>Follow-up messages to people who haven’t funded</div>
+      <label class="f">Quiet hours (WAT), no follow-ups<input id="fQuiet" placeholder="22-8"></label>
+      <label class="f">Big deposit alert from ($)<input id="aBig" type="number"></label>
+      <button class="btn sun" onclick="saveFollow()">Save</button>
+      <h3 style="margin-top:18px">Charts &amp; voice notes in AI chats</h3>
+      <div class="grid g3"><label class="f">Read charts from ($)<input id="mdCf" type="number"></label><label class="f">Charts a day<input id="mdCp" type="number"></label><label class="f">Voice notes from ($)<input id="mdVf" type="number"></label>
+        <label class="f">Voice notes a day (Pro)<input id="mdVp" type="number"></label><label class="f">Voice notes a day (MAX)<input id="mdVm" type="number"></label><label class="f">MAX from ($)<input id="mdMx" type="number"></label><label class="f">Unlock chart reading for one AI (coins)<input id="mdUc" type="number"></label><label class="f">Charts a day once unlocked<input id="mdUp" type="number"></label></div>
+      <div class="tog"><button class="sw" id="mdVr" onclick="this.classList.toggle('on')"></button>MAX: the AI also answers voice notes out loud</div><button class="btn sun" onclick="saveMedia()">Save</button>
+      <h3 style="margin-top:18px">Free period</h3>
+      <p class="dim" style="margin:0 0 8px">Everyone starts free. When it ends nobody is told: the app quietly adds the extra months. After that, anyone who opened the app recently gets the extra months again, and someone who went quiet gets them the moment they come back.</p>
+      <div class="grid g3"><label class="f">First free period (days)<input id="frFirst" type="number"></label><label class="f">Extra free time each time (days)<input id="frExt" type="number"></label><label class="f">"Active" means opened the app in the last (days)<input id="frAct" type="number"></label></div>
+      <div class="tog"><button class="sw" id="frOn" onclick="this.classList.toggle('on')"></button>Extend free time automatically</div><button class="btn sun" onclick="saveFree()">Save</button>
+      <h3 style="margin-top:18px">Telegram bot</h3><div id="botInfo" class="dim"></div></div>
+  </div>
+  <div class="card" style="margin-top:12px"><h2>Bot flows <span class="hint">what people get right after tapping START. Save as many as you like, switch any time, or test a second one on a share of new people.</span></h2>
+    <div class="grid g2" style="grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);align-items:start">
+      <div><div id="flList"></div>
+        <div class="card" style="background:var(--bg);margin-top:10px;padding:12px"><b>A/B test</b><div class="row" style="margin-top:8px"><select class="inp" id="flTo" style="flex:1"></select><input class="inp" id="flPct" type="number" min="0" max="90" style="width:80px"><span class="dim">% of new people</span><button class="btn sm" onclick="flSplit()">Save</button></div><p class="hint">Results per flow are on the left: started → opened the app → connected → funded.</p></div></div>
+      <div class="card" style="background:var(--bg);padding:14px" id="flEd"></div>
+    </div></div>
+  <div class="card" style="margin-top:12px"><h2>Telegram funnel <span class="hint">what people see from the landing page to the app. {name} = their first name.</span></h2>
+    <div class="grid g2">
+      <div><label class="f">Before they tap START (the bot’s welcome screen)<textarea id="fnDesc" rows="3"></textarea><span class="hint">Shown above the START button. Keep the 👇 so they tap it.</span></label>
+        <label class="f">Short description (bot profile)<input id="fnShort"></label>
+        <p class="hint">What they get after START is the active <b>bot flow</b> below.</p></div>
+      <div><div class="tog"><button class="sw" id="fnOn" onclick="this.classList.toggle('on')"></button>Hourly “come back” nudges</div>
+        <div class="grid g2"><label class="f">Every (minutes)<input id="fnEvery" type="number" min="30"></label><label class="f">Only between (WAT)<input id="fnHours" placeholder="8-22"></label></div>
+        <div class="tog"><button class="sw" id="fnDel" onclick="this.classList.toggle('on')"></button>Delete the previous nudge (only the newest stays in the chat)</div>
+        <label class="f">Slow down to every 6 h after … ignored nudges<input id="fnSlow" type="number" min="1"></label>
+        <div class="note">Each nudge fits where the person is: not opened the app → “launch your AI”; no account → “1 minute away”; not funded → “fund $20”; funded → the real next live signal (pair, BUY/SELL, entry time) with a “Take this signal” button. Never in quiet hours, never after /stop, not while a teammate has the chat, and it resets the moment they open the app.</div>
+        <button class="btn sun" style="margin-top:12px" onclick="saveFunnel()">Save funnel</button></div></div></div>
+</section>
+</main></div>
+
+<div id="drw" class="drw hide" onclick="if(event.target===this)closeDrw()"><div class="pn" id="drwP"></div></div>
+<div id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);let KEY='',ME=null,ST=null,mdir='buy',CUR='overview';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2600)}
+async function api(p,body){const r=await fetch(p,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json','X-Admin-Key':KEY},body:body===undefined?undefined:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok||d.ok===false)throw new Error(d.error||('HTTP '+r.status));return d}
+const kpi=(l,v,s='',cls='',go='')=>`<div class="card kpi ${cls} ${go?'go':''}" ${go?`onclick="show('${go}')"`:''}><small>${l}</small><b>${v}</b><i>${s}</i></div>`;
+const money=v=>(v<0?'-$':'$')+Math.abs(+v||0).toLocaleString(undefined,{maximumFractionDigits:2});
+const ago=t=>{if(!t)return '—';const s=(Date.now()-t)/1000;return s<60?'just now':s<3600?Math.floor(s/60)+'m ago':s<86400?Math.floor(s/3600)+'h ago':new Date(t).toLocaleDateString()};
+const when=t=>t?new Date(t).toLocaleString([], {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'—';
+const ini=n=>String(n||'?').trim().split(/\s+/).map(x=>x[0]).slice(0,2).join('').toUpperCase();
+const ICON={security:'<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/>',funnels:'<path d="M3 4h18l-7 8v6l-4 2v-8z"/>',languages:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/>',sales:'<path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/>',overview:'<path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-4H4zM14 4v4h6V4z"/>',inbox:'<path d="M4 13l2.5-8h11L20 13v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/>',members:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.7-3.6 3.3-5.6 6.5-5.6s5.8 2 6.5 5.6"/><path d="M16 5a3 3 0 0 1 0 6M18 14.5c2 .6 3.2 2.5 3.5 5"/>',broadcast:'<path d="M4 10v4l12 5V5z"/><path d="M16 9a3 3 0 0 1 0 6"/>',lives:'<circle cx="12" cy="12" r="3"/><path d="M6.3 6.3a8 8 0 0 0 0 11.4M17.7 6.3a8 8 0 0 1 0 11.4"/>',strategy:'<path d="M4 18l5-6 4 3 7-9"/><path d="M15 6h5v5"/>',signals:'<path d="M3 12h4l3-7 4 14 3-7h4"/>',results:'<path d="M5 20V10M12 20V4M19 20v-7"/>',train:'<path d="M4 6l8-3 8 3-8 3z"/><path d="M8 7.5V12c0 1.5 2 3 4 3s4-1.5 4-3V7.5"/><path d="M20 6v6"/>',engine:'<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',invites:'<path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7"/><path d="M12 7c-2-4-6-4-6-1s6 1 6 1 6 2 6-1-4-3-6 1"/>',team:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.2 4.2-6.5 8-6.5s7 2.3 8 6.5"/>',alerts:'<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 21a2.2 2.2 0 0 0 4 0"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>'};
+const PAGES=[['Daily',[['overview','Overview','Today at a glance and the setup check','overview'],['inbox','Support inbox','Every chat. Take over when someone needs a person','inbox'],['members','Members','Find anyone, fix their account, give coins','members'],['broadcast','Broadcast','Message a group of users on Telegram','broadcast']]],
+ ['Trading',[['lives','Lives','Mentor, times and invites','lives'],['signals','Signals','Post a signal and watch the live feed','signals'],['results','Results','How the signals are scoring','signals'],['strategy','Strategy','How signals are picked','signals']]],
+ ['AI',[['train','Train the AI','Notes and the playbook every AI reads','train'],['engine','AI engine & voice','Which AI answers, voice calls, limits and spend','engine']]],
+ ['Growth',[['funnels','Funnels & bots','Every way people come in: bots, join channels, direct links, sub-IDs for media buyers','funnels'],['languages','Languages','Other countries: translations, local support, mentor and AI traders','languages'],['sales','Sales engine','Your AIs message users at the right moment: wins, near the next level, check-ins','broadcast'],['invites','Invites','Referral results, earlier members, invite codes','invites']]],
+ ['Team',[['security','Security','Blocked and flagged messages, affiliate ID lock, watched channels','security'],['team','Team & activity','Who can sign in, roles and what everyone did','team'],['alerts','My alerts','Get alerts in Telegram or by email',null],['settings','Settings','Hand-off rules, follow-ups and the bot','settings']]]];
+const can=s=>!s||(ME&&ME.perms.includes(s));
+function renderNav(){$('navs').innerHTML=PAGES.map(([g,ps])=>{const l=ps.filter(p=>can(p[3]));return l.length?`<div class="grp">${g}</div>`+l.map(p=>`<button class="nav ${p[0]===CUR?'on':''}" data-p="${p[0]}" onclick="show('${p[0]}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICON[p[0]]}</svg>${p[1]}${p[0]==='inbox'?'<span class="bdg hide" id="navBdg"></span>':''}</button>`).join(''):''}).join('')}
+const LOAD={security:()=>loadSecurity(),funnels:()=>loadFunnels(),languages:()=>loadLanguages(),sales:()=>loadSales(),overview:()=>loadOverview(),inbox:()=>loadInbox(),members:()=>loadMembers(),broadcast:()=>loadBroadcast(),lives:()=>loadLives(),strategy:()=>loadStrategy(),signals:()=>loadSignals(),results:()=>loadResults(),train:()=>loadTrain(),engine:()=>loadEngine(),invites:()=>loadInvites(),team:()=>loadTeam(),alerts:()=>loadAlerts(),settings:()=>loadSettings()};
+function show(p,sub){const pg=PAGES.flatMap(x=>x[1]).find(x=>x[0]===p);if(!pg||!can(pg[3]))p='overview';CUR=p;const P=PAGES.flatMap(x=>x[1]).find(x=>x[0]===p);
+  document.querySelectorAll('main > section').forEach(s=>s.classList.toggle('hide',s.id!=='t-'+p));document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('on',b.dataset.p===p));
+  $('pgT').textContent=P[1];$('pgS').textContent=P[2];$('side').classList.remove('open');try{history.replaceState(null,'','#'+p+(sub?'/'+sub:''))}catch(e){}
+  Promise.resolve(LOAD[p]&&LOAD[p](sub)).catch(e=>toast(e.message))}
+async function login(k){KEY=(k||$('key').value).trim();try{const d=await api('/api/admin/me');ME=d.me;ME.sections=d.sections;ME.rolesN=d.roles;ME.alertsN=d.alerts;try{localStorage.setItem('zbk',KEY)}catch(e){}
+  $('login').classList.add('hide');$('app').classList.remove('hide');$('meName').textContent=ME.name;$('meRole').textContent=ME.roleName||ME.role;$('meAv').textContent=ini(ME.name);boot()}catch(e){$('lerr').textContent='That key didn’t work. Ask the owner for a new sign-in link.';try{localStorage.removeItem('zbk')}catch(x){}}}
+function logout(){try{localStorage.removeItem('zbk')}catch(e){}location.hash='';location.reload()}
+(function(){const h=location.hash.match(/key=([\w-]+)/);if(h){try{history.replaceState(null,'','#')}catch(e){}return login(h[1])}let k='';try{k=localStorage.getItem('zbk')||''}catch(e){}if(k)login(k)})();
+$('key').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+async function boot(){renderNav();if(can('signals')){try{const d=await api('/api/admin/strategy');ST=d.strategy;modeUI();$('modes').classList.remove('hide')}catch(e){}}
+  const h=location.hash.replace('#','').split('/');show(h[0]||'overview',h[1]);badge();setInterval(badge,15000);
+  setInterval(()=>{if(document.hidden)return;if(CUR==='signals')loadSignals();if(CUR==='overview')loadOverview();if(CUR==='inbox')loadInbox(null,true)},6000)}
+async function badge(){if(!can('inbox'))return;try{const d=await api('/api/admin/inbox?filter=needs&limit=1');const b=$('navBdg');if(b){b.textContent=d.counts.needs;b.classList.toggle('hide',!d.counts.needs)}document.title=(d.counts.needs?`(${d.counts.needs}) `:'')+'Zubabot Admin'}catch(e){}}
+document.querySelectorAll('#modes button').forEach(b=>b.onclick=async()=>{if(b.dataset.m==='live'&&!confirm('Switch signals to LIVE? Every user will see them.'))return;const d=await api('/api/admin/strategy',{mode:b.dataset.m});ST=d.strategy;modeUI();toast('Signals: '+ST.mode.toUpperCase())});
+function modeUI(){document.querySelectorAll('#modes button').forEach(b=>b.classList.toggle('on',b.dataset.m===ST.mode))}
+function chips(id,fn){document.querySelectorAll('#'+id+' .chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('#'+id+' .chip').forEach(x=>x.classList.toggle('on',x===c));fn(c)})}
+const chipSet=(id,v)=>document.querySelectorAll('#'+id+' .chip').forEach(c=>c.classList.toggle('on',(c.dataset.f||c.dataset.s||c.dataset.k)===v));
+const chipVal=id=>{const c=document.querySelector('#'+id+' .chip.on');return c?(c.dataset.f||c.dataset.s||c.dataset.k):''};
+
+/* ---------------- overview ---------------- */
+let OV=null;chips('chPick',()=>drawChart());
+async function loadOverview(){const d=await api('/api/admin/overview');OV=d;const k=d.kpi;
+  $('kpis').innerHTML=(can('inbox')?kpi('Needs a human',k.needsHuman,k.humanChats+' chats with the team',k.needsHuman?'alert':'','inbox'):kpi('New users today',k.usersToday,k.users.toLocaleString()+' in total'))
+   +kpi('Deposits today',money(k.depToday),`${k.ftdToday} first deposits · ${money(k.depWeek)} this week`)+kpi('Funded users',k.funded.toLocaleString(),`${k.linked.toLocaleString()} connected · ${k.users.toLocaleString()} opened the app`,'',can('members')?'members':'')
+   +(can('engine')?kpi('AI + voice today',money(k.aiToday),`budget ${money(k.budget)} · ${k.calls} on a call now`,k.budget&&k.aiToday>=k.budget*.8?'alert':'','engine'):kpi('Calls today',k.callsToday,k.calls+' on a call now'));
+  drawChart();
+  $('setup').innerHTML=d.setup.map(x=>`<div class="chk"><span class="dot ${x.ok?'ok':x.warn?'warn':'no'}">${x.ok?'✓':x.warn?'!':'✕'}</span><div><b>${esc(x.k)}</b><span>${x.ok?esc(x.why):`${esc(x.why)}. Add <code>${esc(x.need)}</code>`}</span></div></div>`).join('');
+  $('ovEv').innerHTML=d.recent.map(e=>`<tr><td><span class="tag ${e.type==='withdrawal'?'t-loss':e.type==='registration'?'t-open':'t-win'}">${esc(e.type)}</span></td><td>${esc(e.first_name||('IQ '+e.iq_user_id))}</td><td>${e.amount?money(e.amount):''}</td><td class="dim">${ago(e.created_at)}</td></tr>`).join('')||'<tr><td class="dim">Nothing yet. Registrations and deposits from Affstore show here.</td></tr>';
+  if(ST&&can('signals')){$('ovStratCard').classList.remove('hide');$('ovStrat').innerHTML=`<div class="row" style="margin-bottom:8px"><span class="tag t-${ST.mode==='live'?'live':'test'}">${ST.mode.toUpperCase()}</span><span class="dim">${ST.pairs.filter(p=>p.on).map(p=>esc(p.s)).join(' · ')||'no pairs on'}</span></div><div class="dim">Every <b style="color:var(--ink)">${ST.everySec}s</b> · <b style="color:var(--ink)">${ST.expiryMin} min</b> trades · martingale <b style="color:var(--ink)">${ST.martingale.on?ST.martingale.steps+' steps':'off'}</b></div>`}else $('ovStratCard').classList.add('hide')}
+function drawChart(){if(!OV)return;const k=chipVal('chPick')||'dep';const days=[];for(let i=13;i>=0;i--){const d=new Date(Date.now()+3600e3-i*864e5).toISOString().slice(0,10);const r=OV.days.find(x=>x.d===d)||{};days.push([d,+r[k]||0])}
+  const mx=Math.max(1,...days.map(x=>x[1]));$('chart').innerHTML=days.map(([d,v])=>`<div class="c" title="${d}: ${k==='dep'?money(v):v}"><i style="height:${Math.max(2,v/mx*96)}px;${k==='reg'?'background:var(--blue)':k==='ftd'?'background:var(--win)':''}"></i><span>${+d.slice(8)}</span></div>`).join('');
+  const tot=days.reduce((a,x)=>a+x[1],0);$('chLeg').textContent='total '+(k==='dep'?money(tot):tot)}
+
+/* ---------------- inbox ---------------- */
+let IT=null,ITH=null,LASTN=0;chips('iflt',()=>loadInbox());
+async function loadInbox(sub,quiet){if(sub&&/^\d+$/.test(sub)&&!IT){try{const x=await api('/api/admin/inbox/thread?ticket='+sub);if(x.user&&x.user.tg_id){chipSet('iflt','all');openThread(x.user.tg_id)}}catch(e){}}const d=await api(`/api/admin/inbox?filter=${chipVal('iflt')||'needs'}&q=${encodeURIComponent($('iq').value)}`);
+  $('cNeeds').textContent=d.counts.needs||'';$('cMine').textContent=d.counts.mine||'';
+  $('ilist').innerHTML=d.rows.map(r=>`<div class="cv ${IT===r.tg_id?'on':''}" onclick="openThread('${r.tg_id}')"><span class="av">${ini(r.name)}</span><div style="min-width:0"><b>${esc(r.name)}${r.username?' <span class="dim" style="font-weight:500">@'+esc(r.username)+'</span>':''}</b><p>${r.last_role==='user'?'':r.last_role==='human'?'You: ':'↩ '}${esc(r.last_text)}</p></div>
+    <div class="meta">${ago(r.last_at)}<span class="tag t-${r.status}">${r.status==='waiting'?'needs human':r.status==='human'?esc((r.assignee||'team').split(' ')[0]):'AI'}</span>${r.dep>=20?`<span class="tag t-win">$${Math.round(r.dep)}</span>`:''}</div></div>`).join('')||`<div class="empty">${chipVal('iflt')==='needs'?'Nobody is waiting for a human 🎉':'No chats here yet.'}</div>`;
+  if(IT)loadThread(true);if(!quiet&&sub&&!IT){}}
+async function openThread(id){IT=id;$('ibx').classList.add('thread');document.querySelectorAll('.cv').forEach(c=>c.classList.toggle('on',c.getAttribute('onclick').includes("'"+id+"'")));await loadThread()}
+async function loadThread(poll){if(!IT)return;const d=await api('/api/admin/inbox/thread?tg_id='+IT);if(poll&&ITH&&d.msgs.length===LASTN&&(d.ticket||{}).status===((ITH.ticket||{}).status))return;ITH=d;LASTN=d.msgs.length;
+  const u=d.user||{},t=d.ticket&&['waiting','human'].includes(d.ticket.status)?d.ticket:null,st=t?t.status:'ai',mine=t&&t.assignee===ME.name;
+  let lastDay='';const keep=$('rep')?$('rep').value:'';
+  $('ith').innerHTML=`<div class="hd"><button class="btn sm mob" onclick="$('ibx').classList.remove('thread');IT=null">←</button><span class="av">${ini(u.name)}</span><div class="who"><b>${esc(u.name||'User')}</b><span>${u.username?'@'+esc(u.username)+' · ':''}${esc(u.tg_id||IT)} · ${u.dep>=20?'funded $'+Math.round(u.dep):'not funded'}${u.lang&&u.lang!=='en'?' · <b style="color:var(--sun)">'+esc(u.lang.toUpperCase())+'</b> (you can write in English, it is translated)':''}${u.funnel?' · '+esc(u.funnel)+(u.sub?'/'+esc(u.sub):''):''}${u.mentor?' · mentor here: <b>'+esc(u.mentor)+'</b> (sign mentor replies as '+esc(u.mentor)+')':''}</span></div>
+    <div class="acts"><span class="tag t-${st}">${st==='waiting'?'Needs a human':st==='human'?'With '+esc(t.assignee||'team'):'AI handling'}</span>
+    ${st!=='human'||!mine?`<button class="btn sun sm" onclick="iAct('take')">Take over</button>`:''}${t?`<button class="btn sm" onclick="iAct('handback')">Hand back to AI</button><button class="btn sm" onclick="iAct('close')">Close</button>`:''}</div></div>
+   ${st==='waiting'?`<div class="banner wait">Waiting for a person since ${ago(t.opened_at)}. Why: ${esc(t.reason||'')}. Take over to answer; the assistant stays quiet until then.</div>`:st==='human'?`<div class="banner human">${mine?'You have this chat.':esc(t.assignee)+' has this chat.'} The assistant is quiet. Hand back when it’s solved.</div>`:`<div class="banner ai">The assistant is answering. Type below to jump in (that takes over the chat).</div>`}
+   <div class="msgs" id="msgs">${d.msgs.map(m=>{const dd=new Date(m.at).toLocaleDateString();const day=dd!==lastDay?`<div class="day">${dd}</div>`:'';lastDay=dd;
+     const who=m.role==='user'?esc(u.name||'User'):m.role==='ai'?esc(m.who||'Assistant')+' (AI)':m.role==='human'?esc(m.who||'Team'):m.role==='note'?'Note · '+esc(m.who||''):'';
+     return day+`<div class="m ${m.role} ${m.channel==='app'&&m.role!=='system'?'app':''}">${who?`<small>${who} · ${new Date(m.at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</small>`:''}${msgHTML(m.text)}${m.tr?`<div class="trn">${m.role==='human'?'You wrote':'In English'}: ${esc(m.tr)}</div>`:''}${m.role==='ai'&&can('train')?`<button class="teach" onclick="teach(${m.id})">✎ Teach a better answer</button>`:''}</div>`}).join('')}</div>
+   <div class="cmp"><div class="qr">${['Let me check that for you 🙏','Can you send me a screenshot?','What’s your IQ Option ID? (the number in your IQ Option profile)','Please wait 2 minutes and reopen the app','All sorted ✅'].map(x=>`<span class="chip" onclick="$('rep').value=this.textContent;$('rep').focus()">${esc(x)}</span>`).join('')}</div><textarea id="rep" placeholder="${st==='human'&&mine?'Write a reply… (Enter sends, Shift+Enter new line)':'Write a reply… sending it takes over the chat'}"></textarea>
+    <div class="row"><select id="repCta" class="inp" style="width:auto;padding:6px 8px;font-size:12.5px"><option value="">No button</option><option value="app">🚀 Open Zubabot</option><option value="fund:20">💳 Fund $20</option><option value="fund:50">💳 Fund $50</option><option value="fund:100">💳 Fund $100</option><option value="live">🔴 Join the live</option><option value="coins">🪙 Get coins</option></select>
+     <span style="margin-left:auto"></span><button class="btn sm" onclick="iNote()" title="Only the team sees notes">Private note</button><button class="btn sun" onclick="iSend()">Send</button></div></div>`;
+  $('rep').value=keep;$('rep').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();iSend()}};const ms=$('msgs');ms.scrollTop=ms.scrollHeight;
+  $('iside').innerHTML=`<h3 style="margin:0 0 8px">${esc(u.name||'User')}</h3>${[['Telegram ID',u.tg_id||IT],['IQ Option ID',u.iq_user_id||'—'],['Deposited',money(u.dep||0)],['IQ balance',u.balance==null?'unknown':money(u.balance)],['Last result',u.last_result||'—'],['Coins / tokens',(u.coins||0)+' / '+(u.tokens||0)],['Plan',u.plan||'—'],['Came from',u.src||'—'],['Reminders',u.stopped?'stopped':'on'],['Joined',when(u.created_at)]].map(([k,v])=>`<div class="kv"><span>${k}</span><b>${esc(v)}</b></div>`).join('')}
+   ${can('members')?`<button class="btn sm" style="margin-top:12px;width:100%" onclick="openMember('${esc(u.tg_id||IT)}')">Open member</button>`:''}
+   <h3 style="margin:16px 0 6px">Past tickets</h3>${(d.tickets||[]).map(k=>`<div class="kv"><span>${when(k.opened_at)}</span><b>${esc(k.status)}${k.rating?(k.rating==='up'?' 👍':' 👎'):''}</b></div>`).join('')||'<p class="dim">None</p>'}`}
+async function iAct(a){try{await api('/api/admin/inbox/'+a,{tg_id:IT});toast(a==='take'?'You have this chat now':a==='handback'?'Handed back to the assistant':'Closed');await loadThread();loadInbox(null,true);badge()}catch(e){toast(e.message)}}
+async function iSend(){const t=$('rep').value.trim();if(!t)return;const c=$('repCta').value;const cta=c?{type:c.split(':')[0],amount:+c.split(':')[1]||undefined}:null;
+  try{await api('/api/admin/inbox/reply',{tg_id:IT,text:t,cta});$('rep').value='';await loadThread();loadInbox(null,true);badge()}catch(e){toast(e.message)}}
+async function iNote(){const t=$('rep').value.trim();if(!t)return;await api('/api/admin/inbox/note',{tg_id:IT,text:t});$('rep').value='';loadThread()}
+// a picture the user sent: show it (signed link from the server)
+function msgHTML(t){return esc(t).replace(/📷 picture: (\/api\/upload\?n=[a-z0-9]+&amp;k=[a-f0-9]{24})/g,(x,u)=>{const h=u.replace(/&amp;/g,'&');return `<a href="${h}" target="_blank" rel="noopener"><img src="${h}" alt="picture from the user" style="display:block;max-width:220px;max-height:260px;border-radius:10px;margin-top:4px"></a>`})}
+function teach(id){const m=ITH.msgs.find(x=>x.id===id);drawer(`<h2>Teach a better answer</h2><p class="dim">The assistant said:</p><div class="note">${esc(m.text)}</div>
+  <label class="f" style="margin-top:12px">What should it say instead?<textarea id="tb" rows="5" placeholder="Write the better answer, or the rule it should follow"></textarea></label>
+  <p class="hint">Saved as a training note. Every AI uses it from the next message. You can remove it in Train the AI.</p><div class="row"><button class="btn sun" onclick="teachSave(${id})">Save</button><button class="btn" onclick="closeDrw()">Cancel</button></div>`)}
+async function teachSave(id){try{await api('/api/admin/inbox/teach',{msg_id:id,better:$('tb').value});closeDrw();toast('Saved. The AI knows it now.')}catch(e){toast(e.message)}}
+
+/* ---------------- members ---------------- */
+let MOFF=0;chips('mseg',()=>loadMembers());
+async function loadMembers(more){MOFF=more?MOFF+100:0;const d=await api(`/api/admin/members?seg=${chipVal('mseg')||'all'}&q=${encodeURIComponent($('mq').value)}&offset=${MOFF}`);
+  const rows=d.rows.map(x=>`<tr class="click" onclick="openMember('${x.tg_id}')"><td><b>${esc(x.first_name||'—')}</b>${x.username?' <span class="dim">@'+esc(x.username)+'</span>':''} ${x.blocked?'<span class="tag t-loss">blocked</span>':''}${x.flagged?' <span class="tag t-draw">review</span>':''}</td><td>${x.tg_id}</td><td>${x.iq_user_id||'—'}</td><td>${x.dep?money(x.dep):'—'}</td><td>${x.coins}</td><td>${x.tokens}</td><td>${x.trades}</td><td class="dim">${esc(x.src||'')}</td><td class="dim">${ago(x.created_at)}</td><td>›</td></tr>`).join('');
+  if(more)$('mBody').insertAdjacentHTML('beforeend',rows);else $('mBody').innerHTML=rows||'<tr><td colspan="10" class="dim">Nobody matches.</td></tr>';
+  $('mTot').textContent=d.total.toLocaleString()+' members';$('mMore').classList.toggle('hide',MOFF+100>=d.total)}
+function drawer(h){$('drwP').innerHTML=h;$('drw').classList.remove('hide')}function closeDrw(){$('drw').classList.add('hide')}
+async function openMember(id){const d=await api('/api/admin/members/one?tg_id='+id);const m=d.member,ed=can('members_edit');
+  drawer(`<div class="row"><span class="av">${ini(m.first_name)}</span><div style="flex:1;min-width:0"><h2>${esc(m.first_name||'User')} ${m.username?'<span class="dim" style="font-size:14px">@'+esc(m.username)+'</span>':''}</h2><span class="dim">Telegram ${m.tg_id} · joined ${when(m.created_at)}${m.free_until?' · free until '+new Date(m.free_until).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):''}</span></div><button class="btn sm" onclick="closeDrw()">✕</button></div>
+   <div class="grid g3" style="margin-top:14px">${kpi('Deposited',money(m.dep),m.wd?'withdrew '+money(m.wd):'')}${kpi('Coins',m.coins.toLocaleString())}${kpi('Tokens',m.tokens.toLocaleString())}</div>
+   <div class="card" style="margin-top:12px">${[['IQ Option ID',(m.iq_user_id||'not connected')+(m.linked?' ('+esc(m.link_source)+')':'')],['IQ balance',m.balance==null?'unknown':money(m.balance)],['Trades',m.trades],['Invited by',d.invitedBy||'—'],['Friends invited',d.invited],['Came from',m.src||'—'],['Reminders',m.stopped?'stopped':'on'],['Status',m.blocked?'BLOCKED':m.flagged?'flagged for review':'ok']].map(([k,v])=>`<div class="row" style="justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line2)"><span class="dim">${k}</span><b>${esc(v)}</b></div>`).join('')}
+    <div class="row" style="margin-top:10px">${can('inbox')?`<button class="btn sm" onclick="closeDrw();show('inbox');openThread('${m.tg_id}')">Open chat</button>`:''}</div></div>
+   ${ed?`<div class="card" style="margin-top:12px"><h3>Give or take coins / tokens</h3><div class="row"><input class="inp" id="cC" type="number" placeholder="coins (e.g. 500 or -200)" style="flex:1"><input class="inp" id="cT" type="number" placeholder="tokens" style="flex:1"></div>
+     <input class="inp" id="cN" placeholder="Reason (required, the team sees it)" style="margin-top:8px"><label class="dim" style="display:block;margin-top:8px"><input type="checkbox" id="cNo" checked> tell them on Telegram</label><button class="btn sun" style="margin-top:8px" onclick="mCredit('${m.tg_id}')">Apply</button></div>
+   <div class="card" style="margin-top:12px"><h3>Fix IQ Option ID</h3><p class="hint" style="margin-top:-6px">Only after checking in Affstore that this ID registered with our link.</p><div class="row"><input class="inp" id="iqN" value="${esc(m.iq_user_id||'')}" style="flex:1"><button class="btn" onclick="mIq('${m.tg_id}')">Save ID</button></div></div>
+   <div class="card" style="margin-top:12px"><h3>Account</h3><div class="row"><button class="btn ${m.blocked?'':'loss'} sm" onclick="mAct('block','${m.tg_id}',{blocked:${m.blocked?0:1}})">${m.blocked?'Unblock':'Block'}</button><button class="btn sm" onclick="mAct('flag','${m.tg_id}',{flagged:${m.flagged?0:1}})">${m.flagged?'Clear flag':'Flag for review'}</button><button class="btn sm" onclick="mAct('reminders','${m.tg_id}',{stopped:${m.stopped?0:1}})">${m.stopped?'Turn reminders on':'Stop reminders'}</button></div>
+     <label class="f" style="margin-top:12px">Team note<textarea id="mNoteT" rows="2">${esc(m.note||'')}</textarea></label><button class="btn sm" onclick="mAct('note','${m.tg_id}',{note:$('mNoteT').value})">Save note</button></div>`:''}
+   <div class="card" style="margin-top:12px"><h3>Send a message</h3><textarea id="mMsg" rows="3" placeholder="Goes to their Telegram chat with the bot"></textarea><button class="btn" style="margin-top:8px" onclick="mMsgSend('${m.tg_id}')">Send</button></div>
+   <div class="card" style="margin-top:12px"><h3>Deposits &amp; withdrawals</h3><table><tbody>${d.events.map(e=>`<tr><td><span class="tag ${e.type==='withdrawal'?'t-loss':'t-win'}">${esc(e.type)}</span></td><td>${e.amount?money(e.amount):''}</td><td class="dim">${when(e.created_at)}</td></tr>`).join('')||'<tr><td class="dim">None</td></tr>'}</tbody></table>
+    <h3 style="margin-top:14px">Wallet changes by the team</h3><table><tbody>${d.ledger.map(l=>`<tr><td>${l.coins?l.coins+' coins':''} ${l.tokens?l.tokens+' tokens':''}</td><td>${esc(l.note)}</td><td class="dim">${esc(l.by)} · ${ago(l.at)}</td></tr>`).join('')||'<tr><td class="dim">None</td></tr>'}</tbody></table>
+    <h3 style="margin-top:14px">Last trades</h3><table><tbody>${d.trades.map(t=>`<tr><td>${esc(t.pair)}</td><td><span class="tag t-${t.dir}">${t.dir}</span></td><td>${money(t.amount)}</td><td><span class="tag t-${t.status}">${esc(t.status)}</span></td><td class="dim">${ago(t.created_at)}</td></tr>`).join('')||'<tr><td class="dim">None</td></tr>'}</tbody></table>
+    <h3 style="margin-top:14px">Calls</h3><table><tbody>${d.calls.map(c=>`<tr><td>${esc(c.ai)}</td><td>${esc(c.kind)} · ${esc(c.tier)}</td><td>${Math.round(c.secs/60*10)/10} min</td><td>${c.tokens} tokens</td><td class="dim">${ago(c.started_at)}</td></tr>`).join('')||'<tr><td class="dim">None</td></tr>'}</tbody></table></div>`)}
+async function mCredit(id){try{const d=await api('/api/admin/member/credit',{tg_id:id,coins:+$('cC').value||0,tokens:+$('cT').value||0,note:$('cN').value,notify:$('cNo').checked});toast(`Done: ${d.rewards.coins} coins, ${d.rewards.tokens} tokens`);openMember(id);loadMembers()}catch(e){toast(e.message==='add_a_note'?'Write a reason first':e.message)}}
+async function mIq(id){try{await api('/api/admin/member/iq',{tg_id:id,iq_user_id:$('iqN').value});toast('IQ Option ID saved');openMember(id)}catch(e){if(e.message==='used_by_other'&&confirm('That ID belongs to another Telegram user. Move it to this person?')){await api('/api/admin/member/iq',{tg_id:id,iq_user_id:$('iqN').value,move:true});toast('Moved');openMember(id)}else toast(e.message)}}
+async function mAct(a,id,b){if(a==='block'&&b.blocked&&!confirm('Block this person? They lose access to the app and the bot.'))return;try{await api('/api/admin/member/'+a,{tg_id:id,...b});toast('Saved');openMember(id);loadMembers()}catch(e){toast(e.message)}}
+async function mMsgSend(id){const t=$('mMsg').value.trim();if(!t)return;try{const d=await api('/api/admin/member/message',{tg_id:id,text:t});toast(d.ok?'Sent':'Couldn’t send. They may not have opened the bot.')}catch(e){toast('Couldn’t send. They may not have opened the bot.')}}
+
+/* ---------------- broadcast ---------------- */
+$('bCta').onchange=()=>$('bAmtW').classList.toggle('hide',$('bCta').value!=='fund');
+async function loadBroadcast(){const d=await api('/api/admin/broadcast');const cur=$('bSeg').value;
+  $('bSeg').innerHTML=Object.entries(d.segments).map(([k,v])=>`<option value="${k}">${esc(v.n)} (${v.count.toLocaleString()})</option>`).join('');if(cur)$('bSeg').value=cur;
+  const cs=$('bSrc').value;$('bSrc').innerHTML='<option value="">Any source</option>'+d.sources.map(s=>`<option value="${esc(s.src)}">${esc(s.src)} (${s.n})</option>`).join('');$('bSrc').value=cs;bCount();
+  $('bList').innerHTML=d.list.map(b=>{const s=JSON.parse(b.segment||'{}');return `<tr><td class="dim">${when(b.send_at||b.created_at)}<br>${esc(b.by)}</td><td>${esc((d.segments[s.k]||{}).n||s.k)}${s.src?' · '+esc(s.src):''}</td><td style="max-width:260px">${esc(b.text.slice(0,120))}</td><td>${b.status==='queued'?'<span class="tag t-open">scheduled</span>':b.status==='cancelled'?'<span class="tag t-closed">cancelled</span>':`${b.sent}/${b.total}${b.failed?` <span class="dim">(${b.failed} couldn’t receive)</span>`:''}<div class="bar" style="margin-top:4px"><i style="width:${b.total?b.sent/b.total*100:0}%"></i></div>`}</td><td>${b.status==='queued'?`<button class="btn sm" onclick="bCancel(${b.id})">Cancel</button>`:''}</td></tr>`}).join('')||'<tr><td class="dim" colspan="5">Nothing sent yet.</td></tr>';
+  if(d.list.some(b=>b.status==='sending'))setTimeout(()=>CUR==='broadcast'&&loadBroadcast(),3000)}
+async function bCount(){try{const d=await api('/api/admin/broadcast/count',{segment:$('bSeg').value,src:$('bSrc').value});$('bN').textContent=d.count.toLocaleString()+' people will get it'}catch(e){}}
+async function bSend(test){const t=$('bText').value.trim();if(!t)return toast('Write the message first');const c=$('bCta').value;const cta=c?{type:c,amount:c==='fund'?+$('bAmt').value:undefined}:null;
+  if(!test&&!confirm($('bN').textContent+'. Send now?'))return;
+  try{await api('/api/admin/broadcast',{segment:$('bSeg').value,src:$('bSrc').value,text:t,cta,test,sendAt:$('bAt').value||undefined});toast(test?'Test sent to your Telegram':'Sending…');if(!test){$('bText').value='';loadBroadcast()}}catch(e){toast(e.message.includes('connect')?'Connect your Telegram in My alerts first':e.message)}}
+async function bCancel(id){await api('/api/admin/broadcast/cancel',{id});loadBroadcast()}
+
+/* ---------------- lives ---------------- */
+let LT=[];
+async function loadLives(){const d=await api('/api/admin/lives');const L=d.lives;LT=[...L.times];$('lOn').classList.toggle('on',!!L.on);$('lMentor').value=L.mentor;$('lLink').value=L.link||'';$('lRem').value=L.remindMin;$('lStop').value=L.stopAfter;drawTimes()}
+function drawTimes(){LT.sort();$('lTimes').innerHTML=LT.map((t,i)=>`<span class="chip on">${t} <span style="cursor:pointer;margin-left:6px" onclick="LT.splice(${i},1);drawTimes()">✕</span></span>`).join('')||'<span class="dim">No times</span>';
+  const f=t=>{const [h,m]=t.split(':').map(Number);return (h%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(h>=12?'pm':'am')};
+  $('lPrev').innerHTML=`<b>${esc($('lMentor').value||'Roland')}</b>, our lead mentor, goes live every day at <b>${LT.map(f).join(', ')||'…'}</b> (WAT).<br><br>Telegram invite goes out <b>${$('lRem').value||40} min</b> before each live, at most once a day per person.`}
+function addTime(){const v=$('lNew').value;if(v&&!LT.includes(v)){LT.push(v);drawTimes()}}
+async function saveLives(){try{await api('/api/admin/lives',{on:$('lOn').classList.contains('on'),mentor:$('lMentor').value,link:$('lLink').value,times:LT,remindMin:+$('lRem').value,stopAfter:+$('lStop').value});toast('Saved. Everyone uses the new times now.');drawTimes()}catch(e){toast(e.message)}}
+['lMentor','lRem'].forEach(i=>$(i).oninput=drawTimes);
+
+/* ---------------- train ---------------- */
+let KF=[];
+async function loadProof(){try{const d=await api('/api/admin/knowledge/proof');$('pfList').innerHTML=d.list.map(f=>`<a href="/api/proof?n=${esc(f.replace(/\.\w+$/,''))}" target="_blank" style="display:inline-block;text-align:center;font-size:12px;color:var(--dim)"><img src="/api/proof?n=${esc(f.replace(/\.\w+$/,''))}&t=${Date.now()}" style="width:120px;height:120px;object-fit:cover;border-radius:12px;display:block;margin-bottom:4px">${esc(f)}</a>`).join('')}catch(e){}}
+async function upProof(){const f=$('pfFile').files[0];if(!f)return toast('Pick a picture');if(f.size>3e6)return toast('Max 3 MB');const r=new FileReader();r.onload=async()=>{try{await api('/api/admin/knowledge/proof',{name:$('pfName').value.trim(),data:r.result});toast('Uploaded');loadProof()}catch(e){toast(e.message)}};r.readAsDataURL(f)}
+async function loadTrain(){loadProof();const d=await api('/api/admin/knowledge');KF=d.files;$('kFile').innerHTML=KF.map((f,i)=>`<option value="${i}">${esc(f.name)}</option>`).join('');showFile();
+ $('kInfo').textContent=`${Math.round(d.chars/4).toLocaleString()} tokens of knowledge · app facts updated ${(d.auto||[]).map(a=>new Date(a.updated).toLocaleString()).join(', ')||'never'}`;
+ $('kNotes').innerHTML=d.notes.map(n=>`<div class="row" style="align-items:flex-start;padding:8px 0;border-top:1px solid var(--line2);flex-wrap:nowrap"><span style="flex:1">${esc(n.text)}</span><button class="btn sm" onclick="delNote(${n.id})">Remove</button></div>`).join('')||'<p class="dim">No notes yet.</p>'}
+function showFile(){const f=KF[+$('kFile').value||0];$('kText').value=f?f.text:''}
+async function saveFile(){const f=KF[+$('kFile').value||0];try{await api('/api/admin/knowledge/file',{name:f.name,text:$('kText').value});toast('Saved. The AIs use it now.');loadTrain()}catch(e){toast(e.message)}}
+async function addNote(){const t=$('kNote').value.trim();if(!t)return;try{await api('/api/admin/knowledge/note',{text:t});$('kNote').value='';toast('Saved. The AIs know it now.');loadTrain()}catch(e){toast(e.message)}}
+async function delNote(id){await api('/api/admin/knowledge/note/delete',{id});loadTrain()}
+async function tryAI(){$('kA').textContent='…';try{const d=await api('/api/admin/knowledge/test',{kind:$('kKind').value,text:$('kQ').value,profile:{key:'luna',name:'Zara',style:'Swing',desc:'Waits for the bigger, cleaner move, then calls it.',owned:true},ctx:{name:'Tobi',deposited:$('kFunded').checked?100:0,balance:$('kZero').checked?0:undefined}});
+ $('kA').textContent=d.messages.join('\n\n')+(d.cta?`\n\n[button: ${d.cta.type}${d.cta.amount?' $'+d.cta.amount:''}]`:'')}catch(e){$('kA').textContent=e.message==='no_ai'?'The AI is off: add an AI key in the server’s .env (see AI engine).':e.message}}
+
+/* ---------------- AI engine & voice ---------------- */
+let EN=null;const AREAS=[['support','Support assistant'],['traders','AI traders (not funded / small)'],['funded','AI traders for $100+ users'],['voice','Voice calls (the brain)'],['followups','Telegram follow-ups'],['backup','Backup if one fails']];
+async function loadNews(){try{const n=await api('/api/admin/news');const ago=t=>t?when(t):'never';
+  $('eNews').innerHTML=`<h2>Market news the AIs know <span class="hint">economic calendar + forex headlines, refreshed in the background</span></h2>${!n.on?'<p class="dim">Off (NEWS_ON=0 in .env).</p>':`<div class="row" style="gap:18px;flex-wrap:wrap"><div><b>${n.events}</b> <span class="dim">high/medium events this week · updated ${ago(n.calendarAt)}</span></div><div><span class="dim">headlines updated ${ago(n.headlinesAt)}</span></div></div>${n.headlines&&n.headlines.length?`<div class="dim" style="margin-top:8px;font-size:13px;line-height:1.5">${n.headlines.slice(0,5).map(h=>'· '+esc(h.title)).join('<br>')}</div>`:''}${n.error?`<p class="hint" style="color:var(--amber)">Last problem: ${esc(n.error)}. The AIs say they can't see the news until it works again.</p>`:''}`}`}catch(e){$('eNews').innerHTML=''}}
+async function loadEngine(){loadNews();const [d,v]=await Promise.all([api('/api/admin/engine'),api('/api/admin/voice')]);EN=d;const P=d.providers;
+  $('eK').innerHTML=kpi('AI + voice spend today',money(d.today),'budget '+money(d.ai.budgetUsd),d.today>=d.ai.budgetUsd*.8?'alert':'')+kpi('Calls right now',v.active,'max '+v.settings.maxCalls)+kpi('Calls today',v.today.calls,Math.round(v.today.secs/60)+' minutes · '+v.today.tokens+' tokens')+kpi('Voice cost today',money(v.today.usd),'listening + voices');
+  $('eAreas').innerHTML=AREAS.map(([k,n])=>{const a=d.ai[k]||{};return `<div class="row ea" style="margin-bottom:8px;flex-wrap:nowrap" data-a="${k}"><b style="width:150px;font-size:12.5px;flex:none">${n}</b><select class="inp ep" style="width:auto;max-width:170px;flex:none;padding:8px">${k==='backup'?'<option value="">None</option>':''}${Object.entries(P).map(([pk,p])=>`<option value="${pk}" ${a.provider===pk?'selected':''}>${p.ready?'✓ ':'✕ '}${esc(p.n)}</option>`).join('')}</select><input class="inp em" list="ml" value="${esc(a.model||'')}" style="min-width:0;flex:1" placeholder="model"><button class="btn sm" onclick="eTest(this)">Test</button></div>`}).join('')+`<datalist id="ml">${[...new Set(Object.values(P).flatMap(p=>p.models))].map(m=>`<option value="${esc(m)}">`).join('')}</datalist>`+
+   `<p class="hint">Keys go in the server’s .env: ${Object.values(P).map(p=>`<code>${p.key}</code>`).join(' ')}</p>`;
+  $('eBudget').value=d.ai.budgetUsd;$('eCapFree').value=d.ai.capFree;$('eCapPaid').value=d.ai.capPaid;$('eCapTg').value=d.ai.capTg;
+  const mx=Math.max(.01,...d.byDay.map(x=>x.usd));$('eChart').innerHTML=d.byDay.map(x=>`<div class="c" title="${x.day}: ${money(x.usd)}"><i style="height:${Math.max(2,x.usd/mx*70)}px"></i><span>${+x.day.slice(8)}</span></div>`).join('')||'<span class="dim">No spend yet</span>';
+  $('eSpend').innerHTML=d.spend.slice(0,40).map(s=>`<tr><td>${s.day.slice(5)}</td><td>${esc(s.area)}</td><td>${esc(s.provider)}</td><td class="dim">${esc(s.model)}</td><td>${s.calls}</td><td class="${s.fails?'bad':''}">${s.fails||''}</td><td>${money(s.usd)}</td></tr>`).join('')||'<tr><td colspan="7" class="dim">Nothing yet</td></tr>';
+  const V=v.settings;$('vOn').classList.toggle('on',!!V.on);$('vStt').value=V.stt.join(', ');$('vStd').value=V.standard.join(', ');$('vPrem').value=V.premium.join(', ');$('vPremFrom').value=V.premiumFrom;$('vFrom').value=V.voiceFrom;$('vMax').value=V.maxCalls;$('vDay').value=V.dayMin;$('vDayMax').value=V.dayMinMax;$('vPremDay').value=V.premiumDayMin;
+  const vs=V.voices||{};$('vDs').value=(vs.default||{}).self||'';$('vDo').value=(vs.default||{}).openai||'';$('vDe').value=(vs.default||{}).elevenlabs||'';$('vMs').value=(vs.male||{}).self||'';$('vMo').value=(vs.male||{}).openai||'';$('vMe').value=(vs.male||{}).elevenlabs||'';
+  $('vPer').value=Object.entries(vs.perAI||{}).map(([k,o])=>k+': '+Object.entries(o).map(([p,x])=>p+'='+x).join(', ')).join('\n');
+  const ready=(o)=>Object.entries(o).map(([k,x])=>`<span class="tag ${x?'t-win':'t-closed'}">${x?'✓':'✕'} ${k==='self'?'own server':k}</span>`).join(' ');
+  $('vServers').innerHTML=`<div class="note">${v.servers.length?v.servers.map(s=>`<div><b class="${s.ok?'ok':'bad'}">${s.ok?'● Online':'● Down'}</b> own voice server ${esc(s.url)} ${s.ok?`· ${s.ms} ms · ${esc(s.device||'')} · ${s.tts||0} voices made · ${s.busy_tts||0} busy`:'· '+esc(s.error||'not reachable')}</div>`).join(''):'No own voice server yet (VOICE_SERVER_URL). Calls use the other providers. See voice-server/README.md.'}
+   <div style="margin-top:8px">Listening: ${ready(v.stt)}</div><div style="margin-top:4px">Voices: ${ready(v.tts)}</div></div>`;
+  $('vSum').textContent=`${v.active} on a call now`;
+  $('vCalls').innerHTML=v.recent.map(c=>`<tr class="click" onclick="callTurns('${c.id}')"><td class="dim">${ago(c.started_at)}</td><td>${esc(c.first_name||c.tg_id)}</td><td>${esc(c.ai)}</td><td>${c.kind==='welcome'?'free welcome':'AI call'}</td><td>${esc(c.tier)}</td><td>${Math.floor(c.secs/60)}:${String(c.secs%60).padStart(2,'0')}${c.ended_at?'':' <span class="tag t-live">live</span>'}</td><td>${c.tokens}</td><td>${money(c.usd)}</td></tr>`).join('')||'<tr><td colspan="8" class="dim">No calls yet</td></tr>'}
+async function eTest(b){const r=b.parentNode;b.textContent='…';try{const d=await api('/api/admin/engine/test',{provider:r.querySelector('.ep').value,model:r.querySelector('.em').value});toast(`✓ ${d.ms} ms: ${d.text.slice(0,80)}`)}catch(e){toast('✕ '+e.message)}b.textContent='Test'}
+async function saveEngine(){const ai={capFree:+$('eCapFree').value,capPaid:+$('eCapPaid').value,capTg:+$('eCapTg').value,budgetUsd:+$('eBudget').value};
+  document.querySelectorAll('#eAreas [data-a]').forEach(r=>ai[r.dataset.a]={provider:r.querySelector('.ep').value,model:r.querySelector('.em').value.trim()});
+  try{await api('/api/admin/engine',{ai});toast('Saved');loadEngine()}catch(e){toast(e.message)}}
+const lst=v=>v.split(',').map(x=>x.trim()).filter(Boolean);
+async function saveVoice(){const per={};$('vPer').value.split('\n').forEach(l=>{const m=l.match(/^\s*([\w-]+)\s*:\s*(.+)$/);if(!m)return;per[m[1]]={};m[2].split(',').forEach(p=>{const [a,b]=p.split('=').map(x=>x&&x.trim());if(a&&b)per[m[1]][a]=b})});
+  const voice={on:$('vOn').classList.contains('on'),stt:lst($('vStt').value),standard:lst($('vStd').value),premium:lst($('vPrem').value),premiumFrom:+$('vPremFrom').value,voiceFrom:+$('vFrom').value,maxCalls:+$('vMax').value,dayMin:Math.max(1,+$('vDay').value||60),dayMinMax:Math.max(1,+$('vDayMax').value||120),premiumDayMin:Math.max(0,+$('vPremDay').value||0),
+   voices:{default:{self:$('vDs').value.trim(),openai:$('vDo').value.trim(),elevenlabs:$('vDe').value.trim()},male:{self:$('vMs').value.trim(),openai:$('vMo').value.trim(),elevenlabs:$('vMe').value.trim()},perAI:per}};
+  try{await api('/api/admin/engine',{voice});toast('Voice settings saved');loadEngine()}catch(e){toast(e.message)}}
+async function testVoice(){toast('Making the voice…');try{const d=await api('/api/admin/voice/test',{text:$('vTxt').value,tier:$('vTier').value});const a=$('vAudio');a.src='/api/voice/clip?id='+d.clip;a.classList.remove('hide');a.play().catch(()=>{})}catch(e){toast(e.message==='no_voice_provider'?'No voice is connected yet. Add VOICE_SERVER_URL or OPENAI_API_KEY.':e.message)}}
+async function callTurns(id){const d=await api('/api/admin/voice/call?id='+id);drawer(`<div class="row"><h2 style="flex:1">Call transcript</h2><button class="btn sm" onclick="closeDrw()">✕</button></div><p class="dim">${esc(d.call.ai)} · ${esc(d.call.kind)} · ${Math.round(d.call.secs/6)/10} min · ${d.call.tokens} tokens · ended: ${esc(d.call.end_reason||'on call')}</p><div class="msgs" style="padding:0">${d.turns.map(t=>`<div class="m ${t.role==='user'?'user':'ai'}">${esc(t.text)}</div>`).join('')}</div>`)}
+
+/* ---------------- sales engine ---------------- */
+const SLM=[['care','Check on them after a loss','After a big loss (or losses in a row), ~30 min later one AI checks on them like a friend: calm, one tip, “we take the next clean one together”. Never asks for a deposit. Nothing is sold to them for a day after.',[['lossUsd','Loss of at least ($)','25'],['lossPct','or % of their deposits','25'],['inRow','or losses in a row','3'],['waitMin','Wait before writing (minutes)','25'],['gapDays','Not more often than every (days)','3']]],['chance','Session opening','Active traders: their AI writes 5–25 min before London / New York / Tokyo opens: “watching EUR/USD, want to take it together?”',[['gapDays','Not more often than every (days)','2']]],['streak','Win streak','After 3 and 5 wins in a row, their AI celebrates and shows what the next level gives.',[['at','At wins in a row','3,5']]],['bigday','Great day','When today’s profit is at least this % of what they deposited.',[['pct','% of deposit','30']]],['near','Almost at the next level','“You’re $20 away from voice calls.”',[['pct','Within % of the next level','30'],['gapDays','Not more often than every (days)','5']]],['idle','Check-in','Funded but no trade for a while. No deposit ask, just the next setup.',[['days','After (days without a trade)','2'],['gapDays','Not more often than every (days)','3']]],['tease','A stronger AI introduces itself','A locked AI that had a great day (3+ wins) says hi, with its real numbers.',[['gapDays','Not more often than every (days)','4']]]];
+const MN={'sales:care':'Loss check-in','sales:chance':'Session opening','sales:streak':'Win streak','sales:bigday':'Great day','sales:near':'Almost there','sales:idle':'Check-in','sales:tease':'Stronger AI'};
+async function loadSales(){const d=await api('/api/admin/sales');const S=d.settings;$('slOn').classList.toggle('on',!!S.on);$('slMax').value=S.maxPerDay;if($('slWeek'))$('slWeek').value=S.maxPerWeek||5;
+  $('slMoments').innerHTML=SLM.map(([k,n,ds,fs])=>`<div class="card" style="background:var(--bg);margin-bottom:10px;padding:12px" data-k="${k}"><div class="tog" style="margin-bottom:4px"><button class="sw ${S[k]&&S[k].on?'on':''}" onclick="this.classList.toggle('on')"></button>${n}</div><p class="hint" style="margin:0 0 8px">${ds}</p><div class="row">${fs.map(([f,l])=>`<label class="f" style="margin:0;flex:1;min-width:130px">${l}<input data-f="${f}" value="${esc(Array.isArray(S[k][f])?S[k][f].join(','):S[k][f])}"></label>`).join('')}</div></div>`).join('');
+  const tot=d.stats.reduce((a,x)=>({s:a.s+x.sent,o:a.o+x.opened,dp:a.dp+x.deposited,u:a.u+x.usd}),{s:0,o:0,dp:0,u:0});
+  $('slK').innerHTML=kpi('Messages sent',tot.s,'last 14 days')+kpi('Opened in the app',tot.o,tot.s?Math.round(tot.o/tot.s*100)+'%':'')+kpi('Deposited after',tot.dp,tot.s?Math.round(tot.dp/tot.s*100)+'% of messages':'')+kpi('$ deposited after',money(tot.u),'within 48 hours');
+  $('slStats').innerHTML=d.stats.map(x=>`<tr><td><b>${MN[x.kind]||esc(x.kind)}</b></td><td>${x.sent}</td><td>${x.opened}</td><td>${x.deposited}</td><td>${money(x.usd)}</td></tr>`).join('')||'<tr><td colspan="5" class="dim">Nothing sent yet</td></tr>';
+  $('slLv').innerHTML=d.levels.map(l=>`<div><b>$${l.min.toLocaleString()}</b> ${esc(l.n)}: ${esc(l.gives)}</div>`).join('');
+  $('slRecent').innerHTML=d.recent.map(m=>{const c=m.cta?JSON.parse(m.cta):null;return `<tr><td class="dim">${ago(m.at)}</td><td>${esc(m.first_name||m.tg_id)}</td><td>${esc(m.ai||m.who||'')}</td><td>${MN[m.kind]||esc(m.kind)}</td><td style="max-width:320px">${esc(m.text)}</td><td>${c?esc(c.type+(c.amount?' $'+c.amount:'')):''}</td><td>${m.opened_at?'✓':''}</td></tr>`}).join('')||'<tr><td colspan="7" class="dim">Nothing yet</td></tr>'}
+async function saveSales(){const v={on:$('slOn').classList.contains('on'),maxPerDay:+$('slMax').value,maxPerWeek:+($('slWeek')?$('slWeek').value:5)||5};document.querySelectorAll('#slMoments [data-k]').forEach(c=>{const k=c.dataset.k;v[k]={on:c.querySelector('.sw').classList.contains('on')};c.querySelectorAll('input[data-f]').forEach(i=>{v[k][i.dataset.f]=i.dataset.f==='at'?i.value.split(',').map(Number).filter(Boolean):+i.value})});
+  try{await api('/api/admin/sales',{settings:v});toast('Saved');loadSales()}catch(e){toast(e.message)}}
+async function runSales(){const d=await api('/api/admin/sales/run',{});toast(d.sent+' messages sent');loadSales()}
+
+/* ---------------- invites ---------------- */
+async function loadInvites(){const d=await api('/api/admin/referrals');$('rK').innerHTML=kpi('Friends invited',(d.totals.invited||0).toLocaleString())+kpi('Friends funded',(d.totals.funded||0).toLocaleString())+kpi('Coins paid to inviters',(d.coins||0).toLocaleString());
+  $('rTop').innerHTML=d.top.map(r=>`<tr class="click" onclick="openMember('${r.referrer}')"><td><b>${esc(r.first_name||r.referrer)}</b></td><td>${r.invited}</td><td>${r.funded}</td><td>${(r.coins||0).toLocaleString()}</td></tr>`).join('')||'<tr><td class="dim" colspan="4">No invites yet</td></tr>'}
+async function importIds(){try{const d=await api('/api/admin/import-accounts',{csv:$('impIds').value});toast(`Imported ${d.added} new of ${d.received}`);$('impIds').value=''}catch(e){toast(e.message)}}
+async function makeInvites(){try{const d=await api('/api/admin/invites',{count:+$('invN').value,note:$('invNote').value});$('invOut').textContent=d.invites.map(x=>x.code).join('\n');$('invOut').classList.remove('hide');toast(d.invites.length+' codes created')}catch(e){toast(e.message)}}
+
+/* ---------------- team ---------------- */
+async function loadTeam(){const d=await api('/api/admin/team');const R=d.roles;$('tRole').innerHTML=Object.entries(R).filter(([k])=>k!=='owner').map(([k,v])=>`<option value="${k}">${esc(v.n)}</option>`).join('');
+  $('tBody').innerHTML=d.team.map(m=>`<tr><td><b>${esc(m.name)}</b>${m.keyHint?` <span class="dim">…${esc(m.keyHint)}</span>`:''}</td><td>${m.id===0?'Owner':`<select class="inp" style="width:auto;padding:5px" onchange="tUpd(${m.id},{role:this.value})">${Object.entries(R).filter(([k])=>k!=='owner').map(([k,v])=>`<option value="${k}" ${k===m.role?'selected':''}>${esc(v.n)}</option>`).join('')}</select>${m.role==='buyer'?`<input class="inp" style="width:150px;padding:5px;margin-top:4px" value="${esc(m.subs||'')}" placeholder="sub-IDs" onchange="tUpd(${m.id},{subs:this.value})">`:''}`}</td>
+    <td>${m.tg?'<span class="tag t-win">Telegram ✓</span>':'<span class="tag t-closed">not connected</span>'}</td><td class="dim">${m.id===0?'—':ago(m.lastSeen)}</td><td>${m.id===0?'':`<button class="sw ${m.active?'on':''}" onclick="tUpd(${m.id},{active:${m.active?0:1}})"></button>`}</td><td>${m.id===0?'':`<button class="btn sm" onclick="tKey(${m.id},'${esc(m.name)}')">New link</button>`}</td></tr>`).join('');
+  const S=d.sections;$('tRoles').innerHTML=`<thead><tr><th></th>${Object.values(R).map(r=>`<th>${esc(r.n)}</th>`).join('')}</tr></thead><tbody>${Object.entries(S).map(([k,n])=>`<tr><td>${esc(n)}</td>${Object.values(R).map(r=>`<td>${r.p.includes(k)?'<span class="ok">✓</span>':''}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  $('aWho').innerHTML='<option value="">Everyone</option>'+d.team.map(m=>`<option>${esc(m.name)}</option>`).join('');loadActivity()}
+const pretty=t=>{try{const o=JSON.parse(t);if(o&&typeof o==='object')return Object.entries(o).map(([k,v])=>k+': '+(typeof v==='object'?JSON.stringify(v):v)).join(' · ')}catch(e){}return t};
+async function loadActivity(){const d=await api('/api/admin/activity?who='+encodeURIComponent($('aWho').value));$('aBody').innerHTML=d.rows.map(a=>`<tr><td class="dim">${when(a.at)}</td><td><b>${esc(a.who)}</b></td><td>${esc(a.action)}</td><td class="dim" style="word-break:break-word">${esc(pretty(a.detail))}</td></tr>`).join('')||'<tr><td class="dim" colspan="4">Nothing yet</td></tr>'}
+async function addMember(){const n=$('tName').value.trim();if(!n)return toast('Write a name');try{const d=await api('/api/admin/team',{name:n,role:$('tRole').value,subs:$('tSubs').value});$('tName').value='';linkBox(n,d.link);loadTeam()}catch(e){toast(e.message)}}
+function linkBox(n,link){$('tNew').classList.remove('hide');$('tNew').innerHTML=`<b>Sign-in link for ${esc(n)}</b> (shown once, send it privately):<pre id="tLink">${esc(link)}</pre><button class="btn sm" onclick="navigator.clipboard.writeText($('tLink').textContent).then(()=>toast('Copied'),()=>toast('Select and copy it'))">Copy link</button> <span class="hint">If PUBLIC_URL isn’t set, the link starts with /admin: add your server address in front.</span>`}
+async function tUpd(id,b){try{await api('/api/admin/team/update',{id,...b});toast('Saved');loadTeam()}catch(e){toast(e.message)}}
+async function tKey(id,n){if(!confirm('Make a new sign-in link for '+n+'? The old link stops working.'))return;const d=await api('/api/admin/team/update',{id,newKey:true});linkBox(n,d.link)}
+
+/* ---------------- my alerts ---------------- */
+async function loadAlerts(){const d=await api('/api/admin/me');ME={...ME,...d.me};const A=d.alerts;
+  $('alList').innerHTML=Object.entries(A).map(([k,n])=>`<label class="row" style="padding:6px 0;border-bottom:1px solid var(--line2);flex-wrap:nowrap"><input type="checkbox" value="${k}" ${ME.alerts.includes(k)?'checked':''}><span>${esc(n)}</span></label>`).join('');
+  $('alEmail').value=ME.email||'';$('alName').value=ME.name||'';$('alEmailOn').checked=!!ME.emailAlerts;
+  const s=await api('/api/admin/alerts/me',{alerts:ME.alerts,email:ME.email,emailAlerts:ME.emailAlerts});
+  $('alTg').innerHTML=ME.tg?`<p><span class="tag t-win">Connected ✓</span> ${esc(ME.tgName||'')}</p><button class="btn sm" onclick="disc()">Disconnect</button>`:`<a class="btn sun" style="display:inline-block;text-decoration:none" href="${esc(s.alertLink)}" target="_blank" rel="noopener">Connect Telegram</a><p class="hint">Opens the bot. Tap Start, then come back and refresh.</p>`}
+async function saveAlerts(){const alerts=[...document.querySelectorAll('#alList input:checked')].map(x=>x.value);try{await api('/api/admin/alerts/me',{alerts,email:$('alEmail').value.trim(),emailAlerts:$('alEmailOn').checked,name:$('alName').value.trim()||undefined});toast('Saved');loadAlerts()}catch(e){toast(e.message)}}
+async function disc(){await api('/api/admin/alerts/me',{alerts:ME.alerts,disconnect:true});loadAlerts()}
+async function testAlert(){try{const d=await api('/api/admin/alerts/test',{});toast(d.sent?'Sent. Check your Telegram.':'Not sent. Connect Telegram first.')}catch(e){toast(e.message)}}
+
+/* ---------------- settings ---------------- */
+async function loadSettings(){const d=await api('/api/admin/settings');const S=d.all.support,F=d.all.followups,A=d.all.alerts;
+  $('sName').value=S.name;$('sIntro').classList.toggle('on',!!S.introOnTakeover);$('sRate').classList.toggle('on',!!S.askRating);$('sSla').value=S.slaMin;$('sBack').value=S.aiBackMin;$('sIdle').value=S.idleBackH;$('sWords').value=S.humanWords;
+  const MD=d.all.media||{};$('mdCf').value=MD.chartsFrom;$('mdCp').value=MD.chartsPerDay;$('mdVf').value=MD.voiceFrom;$('mdVp').value=MD.voicePerDayPro;$('mdVm').value=MD.voicePerDayMax;$('mdMx').value=MD.maxFrom;$('mdVr').classList.toggle('on',!!MD.voiceReplyMax);$('mdUc').value=MD.chartUnlockCoins;$('mdUp').value=MD.chartsPerDayUnlocked;const FR=d.all.free||{};$('frFirst').value=FR.firstDays;$('frExt').value=FR.extendDays;$('frAct').value=FR.activeDays;$('frOn').classList.toggle('on',!!FR.on);$('fOn').classList.toggle('on',!!F.on);$('fQuiet').value=F.quiet;$('aBig').value=A.bigDeposit;loadFunnel(d.all.funnel);
+  try{const b=await api('/api/admin/bot');$('botInfo').innerHTML=b.on?`On · ${b.users.n||0} people in the chat · ${b.users.stopped||0} sent /stop<br>Follow-up steps: ${b.steps.map(s=>'step '+s.fu_step+': '+s.n).join(' · ')}`:'Off. Set TELEGRAM_BOT_TOKEN in the server’s .env.'}catch(e){}}
+/* ---------------- funnels & bots ---------------- */
+let FN=null,FNL='';
+const TYPES={bot:['🤖','Bot chat → app','START in the bot, the welcome flow, then the app'],join:['🚪','Join channel (auto-accept)','They request to join your channel, the bot accepts them and sends the flow'],direct:['⚡','Straight to the app','The link opens the mini app right away']};
+const flagOf=l=>(FN&&FN.langs[l]?FN.langs[l].flag:'');
+const pc=(a,b)=>b?Math.round(a/b*100)+'%':'—';
+async function loadFunnels(){FN=await api('/api/admin/funnels');
+  document.querySelectorAll('#t-funnels .fn-own').forEach(e=>e.classList.toggle('hide',FN.buyer));
+  const all=FN.funnels.filter(f=>f.active);const sum=k=>all.reduce((s,f)=>s+(+f.stats[k]||0),0);
+  $('fnK').innerHTML=kpi('Live funnels',all.length,`${FN.bots.length} bot${FN.bots.length===1?'':'s'}`)+kpi('People',sum('users').toLocaleString(),`${sum('opened').toLocaleString()} opened the app`)+kpi('Funded',sum('funded').toLocaleString(),`${pc(sum('funded'),sum('users'))} of everyone`)+kpi('Deposits',money(sum('deposits')),FN.buyer?'from your sub-IDs':'all funnels');
+  const langs=[...new Set(FN.funnels.map(f=>f.lang))];
+  $('fnLang').innerHTML=`<span class="chip ${!FNL?'on':''}" onclick="FNL='';loadFunnelsLocal()">All</span>`+langs.map(l=>`<span class="chip ${FNL===l?'on':''}" onclick="FNL='${l}';loadFunnelsLocal()">${flagOf(l)} ${esc(FN.langs[l].n)}</span>`).join('');
+  $('bLang').innerHTML=Object.entries(FN.langs).map(([k,v])=>`<option value="${k}">${v.flag} ${esc(v.n)}</option>`).join('');
+  loadFunnelsLocal();
+  $('fnBots').innerHTML=FN.buyer?'':FN.bots.map(b=>`<div class="fn-bot"><span class="fl">${flagOf(b.lang)}</span><div style="flex:1;min-width:0"><b>@${esc(b.username||'(main bot)')}</b><span class="dim">${b.main?'Main bot (TELEGRAM_BOT_TOKEN)':esc(b.title||'')} · ${b.users.toLocaleString()} people${b.error?' · <span style="color:var(--loss)">'+esc(b.error)+'</span>':''}</span></div>
+    ${b.main?'':`<select class="inp" style="width:auto" onchange="botUpd(${b.id},{lang:this.value})">${Object.entries(FN.langs).map(([k,v])=>`<option value="${k}" ${k===b.lang?'selected':''}>${v.flag} ${esc(v.n)}</option>`).join('')}</select><button class="sw ${b.on?'on':''}" title="On / off" onclick="botUpd(${b.id},{on:!this.classList.contains('on')})"></button>`}</div>`).join('')}
+function loadFunnelsLocal(){const L=FN.funnels.filter(f=>!FNL||f.lang===FNL).sort((a,b)=>(b.active-a.active)||(b.stats.users-a.stats.users));
+  document.querySelectorAll('#fnLang .chip').forEach(c=>c.classList.toggle('on',(c.textContent.trim()==='All'&&!FNL)||(FNL&&c.textContent.includes(FN.langs[FNL].n))));
+  const card=(f)=>{const s=f.stats,t=TYPES[f.type]||TYPES.bot,lv=FN.langs[f.lang]||{};return `<div class="card fn ${f.active?'':'off'}">
+    <div class="row" style="flex-wrap:nowrap"><span class="fn-ic">${t[0]}</span><div style="flex:1;min-width:0"><b class="fn-n">${esc(f.name)}</b><span class="dim fn-s">${lv.flag||''} ${esc(lv.n||f.lang)}${f.lang!=='en'&&!lv.live?' <span class="tag t-draw">language off</span>':''} · ${esc(t[1])} · @${esc(f.botName||'bot')}${f.flow?' · flow: '+esc(f.flow):''}${f.mentor&&f.mentor.on?' · mentor: <b>'+esc(f.mentor.name)+'</b>':''}</span></div>
+      ${FN.buyer?'':`<button class="sw ${f.active?'on':''}" title="${f.active?'Live':'Paused'}" onclick="fnToggle('${f.slug}',${!f.active})"></button>`}</div>
+    <div class="fn-st"><div><b>${s.users.toLocaleString()}</b><small>people</small></div><div><b>${pc(s.opened,s.users)}</b><small>opened app</small></div><div><b>${pc(s.accounts,s.users)}</b><small>accounts</small></div><div><b>${s.funded.toLocaleString()}</b><small>funded · ${pc(s.funded,s.users)}</small></div><div><b>${money(s.deposits)}</b><small>deposits</small></div></div>
+    <div class="row" style="margin-top:10px"><button class="btn sun sm" onclick="fnLinks('${f.slug}')">Links & sub-IDs</button>${FN.buyer?'':`<button class="btn sm" onclick="fnEdit('${f.slug}')">Edit</button>`}</div></div>`};
+  // one section per language, its funnels (sub-funnels) inside, with the language's own totals
+  const langs=[...new Set(L.map(f=>f.lang))].sort((a,b)=>(a==='en'?-1:b==='en'?1:0)||a.localeCompare(b));
+  $('fnList').innerHTML=langs.map(l=>{const G=L.filter(f=>f.lang===l),A=G.filter(f=>f.active),lv=FN.langs[l]||{},t=(k)=>A.reduce((s,f)=>s+(+f.stats[k]||0),0);
+    return `<div class="fn-lg"><div class="fn-lgh"><span class="fl">${lv.flag||''}</span><div style="flex:1;min-width:0"><b>${esc(lv.n||l)}</b>${l!=='en'&&!lv.live?' <span class="tag t-draw">language off</span>':''}<span class="dim">${A.length} live funnel${A.length===1?'':'s'} · ${t('users').toLocaleString()} people · ${t('funded').toLocaleString()} funded · ${money(t('deposits'))}</span></div>${FN.buyer?'':`<button class="btn sm" onclick="FNL='${l}';fnNew()">+ Funnel</button>`}</div><div class="fn-lgb">${G.map(card).join('')}</div></div>`}).join('')||'<div class="card dim">No funnels here yet.</div>'}
+function fnForm(f){const flows=FN.flows;const L=f.lang||'en';return `<h2 style="margin:0 0 4px">${f.slug?'Edit funnel':'New funnel'}</h2><p class="dim" style="margin:0 0 14px;font-size:13px">A funnel = one way people come in. Same users, same AIs, same team behind every funnel.</p>
+  <label class="f">Name<input id="fName" value="${esc(f.name||'')}" placeholder="e.g. Brazil · TikTok test" oninput="if(!FEDIT)$('fSlug').value=this.value.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,30)"></label>
+  <label class="f">Name in the link<input id="fSlug" value="${esc(f.slug||'')}" ${f.slug?'disabled':''} placeholder="br-tiktok"><span class="hint">Small letters, numbers and - only. Can't change later.</span></label>
+  <div class="f-lbl">Language</div><div class="chips" id="fLang">${Object.entries(FN.langs).map(([k,v])=>`<span class="chip ${k===L?'on':''}" data-k="${k}">${v.flag} ${esc(v.n)}${k!=='en'&&!v.live?' <i class="dim" style="font-style:normal">(off)</i>':''}</span>`).join('')}</div>
+  <div class="f-lbl">Type</div><div class="fn-types" id="fType">${Object.entries(TYPES).map(([k,t])=>`<button class="fn-t ${(f.type||'bot')===k?'on':''}" data-k="${k}" onclick="document.querySelectorAll('#fType .fn-t').forEach(x=>x.classList.toggle('on',x===this));$('fJoin').classList.toggle('hide','${k}'!=='join')"><span>${t[0]}</span><b>${t[1]}</b><small>${t[2]}</small></button>`).join('')}</div>
+  <label class="f">Bot<select id="fBot">${FN.bots.map(b=>`<option value="${b.id}" ${+f.bot===b.id?'selected':''}>${flagOf(b.lang)} @${esc(b.username||'main bot')}</option>`).join('')}</select></label>
+  <div id="fJoin" class="${(f.type||'bot')==='join'?'':'hide'}"><label class="f">Channel<input id="fCh" value="${esc(f.channel_id||'')}" placeholder="@yourchannel or -100…"><span class="hint">Add the bot to the channel as an admin with “Invite users”. Then make invite links per sub-ID in Links.</span></label>
+    <div class="f-lbl">Accept join requests</div><div class="chips" id="fAp">${[['instant','Instantly'],['delay','After a short wait'],['off','Don\'t accept (manual)']].map(([k,n])=>`<span class="chip ${(f.approve||'instant')===k?'on':''}" data-k="${k}">${n}</span>`).join('')}</div>
+    <label class="f" style="margin-top:8px">Wait (seconds, for "after a short wait")<input id="fDelay" type="number" min="0" max="86400" value="${+f.approve_delay||60}"></label></div>
+  <label class="f">Welcome flow<select id="fFlow"><option value="">Use the active flow (and its A/B test)</option>${flows.map(x=>`<option value="${esc(x.key)}" ${f.flow===x.key?'selected':''}>${flagOf(x.lang)} ${esc(x.name)}</option>`).join('')}</select><span class="hint">Flows are made in Settings → Bot flows (one click makes a copy in another language). A flow in another language than the funnel is translated automatically.</span></label>
+  <div class="card" style="background:var(--bg);padding:12px;margin-bottom:12px"><b>Affiliate & tracking</b><p class="hint" style="margin:2px 0 8px">Leave empty to use the main settings. Only our affiliate IDs are accepted.</p>
+    <div class="grid g2"><label class="f">Affiliate ID<select id="fAff"><option value="">Main (${esc((FN.affIds||[]).join(', ')||'from .env')})</option>${(FN.affIds||[]).map(a=>`<option ${f.aff_id===a?'selected':''}>${esc(a)}</option>`).join('')}</select></label>
+    <label class="f">Tracking name (afftrack start)<input id="fTrack" value="${esc(f.track||'')}" placeholder="e.g. br_tiktok_"><span class="hint">Becomes ${esc(f.track||'Zubabot_')}<i>sub</i>_tg<i>ID</i> in Affstore</span></label></div>
+    <label class="f">Sign-up link (manual mode / landing pages)<input id="fAffL" value="${esc(f.aff_link||'')}" placeholder="https://iqbroker.com/lp/regframe-01-light-nosocials/en/?aff=743768&afftrack={afftrack}"></label>
+    <div class="tog" style="margin:0"><button class="sw ${f.track_sub!==0?'on':''}" id="fTS" onclick="this.classList.toggle('on')"></button>Add the sub-ID to the tracking name</div></div>
+  ${f.type==='direct'?'':foCard(f.follow,'fE')}${fnMentorCard(f)}
+  <label class="f">Note (who runs it, what you're testing)<input id="fNote" value="${esc(f.note||'')}"></label>
+  ${f.slug?`<p class="hint">Last change: ${f.updated_by?esc(f.updated_by)+' · '+when(f.updated_at):'—'} · <a href="#" onclick="event.preventDefault();fnHist('${f.slug}')">history</a></p>`:''}
+  <div class="row" style="margin-top:6px"><button class="btn sun" onclick="fnSave(${f.slug?'true':'false'})">${f.slug?'Save':'Create funnel'}</button><button class="btn" onclick="closeDrw()">Cancel</button>${f.slug&&f.slug!=='main'?`<button class="btn sm loss" style="margin-left:auto" onclick="fnToggle('${f.slug}',false,true)">Pause</button>`:''}</div>`}
+
+// automatic follow-ups for one funnel: how often, written by their AI or from the set messages, who gets them
+const FO_DEF={on:true,every:60,style:'ai',hours:'8-22',days:14,stages:['no_app','no_account','no_deposit','funded'],signals:true};
+const FO_ST={no_app:'Started the bot, never opened the app',no_account:'Opened the app, no IQ Option account yet',no_deposit:'Has an account, not funded',funded:'Funded but not trading'};
+function foCard(fo,P){const own=!!fo;fo={...FO_DEF,...(fo||{})};return `<div class="card fo-card" id="${P}Card" data-own="${own?1:0}" onclick="this.dataset.t=1" oninput="this.dataset.t=1" style="background:var(--bg);padding:12px;margin:12px 0">
+  <div class="tog" style="margin:0"><button class="sw ${fo.on?'on':''}" id="${P}On" onclick="this.classList.toggle('on');$('${P}Box').classList.toggle('hide',!this.classList.contains('on'))"></button><b>Automatic follow-ups</b></div>
+  <p class="hint" style="margin:4px 0 0">Keeps people from this funnel coming back until they trade: their own AI texts them about its signals and today's setups, in their language. The old reminder is deleted when a new one comes, so the chat stays clean. Stops when they trade, reply or tap /stop.</p>${own?'':'<p class="hint" style="margin:4px 0 0">Right now this funnel uses the main follow-up settings (Engine page). Change anything here to give it its own.</p>'}
+  <div id="${P}Box" class="${fo.on?'':'hide'}" style="margin-top:10px">
+    <div class="f-lbl">How often</div><div class="chips" id="${P}Ev">${[[30,'30 min'],[60,'Every hour'],[120,'2 h'],[180,'3 h'],[360,'6 h'],[720,'12 h']].map(([k,n])=>`<span class="chip ${fo.every===k?'on':''}" data-k="${k}">${n}</span>`).join('')}</div>
+    <div class="f-lbl">Who writes them</div><div class="chips" id="${P}Sty"><span class="chip ${fo.style==='ai'?'on':''}" data-k="ai">✨ Their AI, new words every time</span><span class="chip ${fo.style==='set'?'on':''}" data-k="set">📝 Our set messages</span></div>
+    <div class="f-lbl">Send to</div><div class="chips" id="${P}Stg">${Object.entries(FO_ST).map(([k,n])=>`<span class="chip ${fo.stages.includes(k)?'on':''}" data-k="${k}" onclick="this.classList.toggle('on')">${n}</span>`).join('')}</div>
+    <div class="grid g2" style="margin-top:8px"><label class="f">Only between (their local hours)<input id="${P}Hrs" value="${esc(fo.hours)}" placeholder="8-22"></label><label class="f">Stop after (days)<input id="${P}Days" type="number" min="1" max="60" value="${fo.days}"></label></div>
+    <div class="tog" style="margin:4px 0 0"><button class="sw ${fo.signals?'on':''}" id="${P}Sig" onclick="this.classList.toggle('on')"></button>Mention the AI's live signal when there is one ("Viza has GBP/USD BUY in 4 min, check it now")</div>
+    <p class="hint" style="margin:8px 0 0">After 12 ignored reminders it slows to every 6 hours on its own. Quiet hours and Telegram limits are handled for you.</p></div></div>`}
+function foBind(P){chips(P+'Ev',()=>{});chips(P+'Sty',()=>{})}
+function foVal(P){if(!$(P+'On'))return undefined;const cd=$(P+'Card');if(cd&&cd.dataset.own==='0'&&!cd.dataset.t)return undefined;const on=$(P+'On').classList.contains('on');const ev=document.querySelector('#'+P+'Ev .chip.on'),st=document.querySelector('#'+P+'Sty .chip.on');
+  return {on,every:ev?+ev.dataset.k:60,style:st?st.dataset.k:'ai',hours:$(P+'Hrs').value.trim()||'8-22',days:+$(P+'Days').value||14,stages:[...document.querySelectorAll('#'+P+'Stg .chip.on')].map(c=>c.dataset.k),signals:$(P+'Sig').classList.contains('on')}}
+function fnMentorCard(f){const m=f.mentor||{};const on=!!m.on;const lv=m.lives||'main';return `<div class="card" style="background:var(--bg);padding:12px;margin-bottom:12px"><div class="tog" style="margin:0"><button class="sw ${on?'on':''}" id="fMOn" onclick="this.classList.toggle('on');$('fMBox').classList.toggle('hide',!this.classList.contains('on'))"></button><b>This funnel has its own lead mentor</b></div>
+  <p class="hint" style="margin:4px 0 0">Off = people from this funnel see the region's mentor (English: Roland). On = they see this name and face everywhere: the app, the bot messages, the AI's replies and the mentor chat.</p>
+  <div id="fMBox" class="${on?'':'hide'}" style="margin-top:10px">
+    <div class="row" style="align-items:flex-start;gap:12px"><div style="flex:none;text-align:center"><img id="fMImg" src="${esc(m.photo?(/^https?:|^\//.test(m.photo)?m.photo:'/'+m.photo):'')}" style="width:76px;height:76px;border-radius:50%;object-fit:cover;background:#2A3044;display:block" onerror="this.style.visibility='hidden'" onload="this.style.visibility='visible'">
+      <label class="btn sm" style="margin-top:6px;display:inline-block;cursor:pointer">Upload photo<input type="file" accept="image/jpeg,image/png,image/webp" class="hide" onchange="fnMPhoto(this)"></label><input type="hidden" id="fMPhoto" value="${esc(m.photo||'')}"></div>
+      <div style="flex:1;min-width:0"><label class="f">Mentor name<input id="fMName" maxlength="40" value="${esc(m.name||'')}" placeholder="e.g. Daniel"></label><label class="f">Title (optional)<input id="fMRole" maxlength="60" value="${esc(m.role||'')}" placeholder="Lead mentor"></label></div></div>
+    <label class="f">Short bio (optional, the AI uses it too)<input id="fMBio" maxlength="300" value="${esc(m.bio||'')}" placeholder="8 years trading forex, trades live with the community every day"></label>
+    <div class="f-lbl">Lives for this funnel</div><div class="chips" id="fMLv">${[['main','Same lives as the region (same times and link)'],['own','Own lives (own link and times)'],['off','No lives']].map(([k,n])=>`<span class="chip ${lv===k?'on':''}" data-k="${k}">${n}</span>`).join('')}</div>
+    <div id="fMOwn" class="${lv==='own'?'':'hide'}" style="margin-top:8px"><label class="f">Live link<input id="fMLink" value="${esc(m.link||'')}" placeholder="https://… (YouTube, Telegram channel live…)"><span class="hint">Every admin gets an email when this link changes, and private contacts are flagged by Security.</span></label>
+      <div class="grid g2"><label class="f">Live times (comma separated)<input id="fMTimes" value="${esc((m.times||[]).join(', '))}" placeholder="12:00, 19:00"></label><label class="f">Time zone name and UTC offset<span class="row" style="gap:6px"><input id="fMTz" style="width:80px" value="${esc(m.tz||'WAT')}" placeholder="WAT"><input id="fMOff" type="number" min="-12" max="14" style="width:80px" value="${m.offset??1}"></span></label></div></div>
+    <p class="hint" style="margin:6px 0 0">Tip: open the app link of this funnel once you save to see it as a new person would.</p></div></div>`}
+async function fnMPhoto(inp){const file=inp.files&&inp.files[0];if(!file)return;if(file.size>3e6)return toast('Photo too big (max 3 MB)');
+  const data=await new Promise((r)=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(file)});
+  try{const d=await api('/api/admin/funnels/photo',{slug:$('fSlug').value.trim()||'f',data});$('fMPhoto').value=d.url;$('fMImg').src=d.url;toast('Photo uploaded')}catch(e){toast(e.message)}}
+function fnMentorVal(){if(!$('fMOn'))return undefined;return {on:$('fMOn').classList.contains('on'),name:$('fMName').value.trim(),role:$('fMRole').value.trim(),bio:$('fMBio').value.trim(),photo:$('fMPhoto').value,lives:chipVal('fMLv')||'main',link:$('fMLink').value.trim(),times:$('fMTimes').value,tz:$('fMTz').value.trim(),offset:+$('fMOff').value}}
+let FEDIT=false;
+function fnNew(){return fbOpen()}
+function fnNewClassic(){FEDIT=false;drawer(fnForm({lang:FNL||'en',type:'bot',bot:0}));if($('fEOn'))foBind('fE');chips('fLang',()=>{});chips('fAp',()=>{});chips('fMLv',(c)=>$('fMOwn').classList.toggle('hide',c.dataset.k!=='own'))}
+function fnEdit(slug){FEDIT=true;const f=FN.funnels.find(x=>x.slug===slug);drawer(fnForm(f));if($('fEOn'))foBind('fE');chips('fLang',()=>{});chips('fAp',()=>{});chips('fMLv',(c)=>$('fMOwn').classList.toggle('hide',c.dataset.k!=='own'))}
+async function fnSave(edit){const t=document.querySelector('#fType .fn-t.on');try{const d=await api('/api/admin/funnels/save',{edit,slug:$('fSlug').value.trim(),name:$('fName').value.trim(),lang:chipVal('fLang'),type:t?t.dataset.k:'bot',bot:+$('fBot').value,flow:$('fFlow').value,channel_id:$('fCh').value.trim(),approve:chipVal('fAp')||'instant',approve_delay:+$('fDelay').value,note:$('fNote').value,aff_id:$('fAff').value,aff_link:$('fAffL').value.trim(),track:$('fTrack').value.trim(),track_sub:$('fTS').classList.contains('on'),mentor:fnMentorVal(),follow:foVal('fE')});
+  closeDrw();toast(d.warn||'Saved');if(d.warn)setTimeout(()=>alert(d.warn),50);await loadFunnels();if(!edit)fnLinks(d.funnel.slug)}catch(e){toast(e.message)}}
+async function fnHist(slug){const d=await api('/api/admin/funnels/history?slug='+encodeURIComponent(slug));drawer(`<h2 style="margin:0 0 12px">Changes to ${esc(slug)}</h2>${d.rows.map(r=>`<div class="kv2"><b>${esc(r.who||'—')} · ${when(r.at)}</b><pre style="margin:4px 0 0">${esc(r.changes)}</pre></div>`).join('')||'<p class="dim">No changes yet.</p>'}<button class="btn" style="margin-top:10px" onclick="fnEdit('${slug}')">Back</button>`)}
+async function fnToggle(slug,on,close){const f=FN.funnels.find(x=>x.slug===slug);try{await api('/api/admin/funnels/save',{...f,edit:true,active:on});if(close)closeDrw();toast(on?'Live':'Paused');loadFunnels()}catch(e){toast(e.message)}}
+async function fnLinks(slug){const f=FN.funnels.find(x=>x.slug===slug);const d=await api('/api/admin/funnels/subs?slug='+encodeURIComponent(slug));
+  const mine=FN.buyer?FN.mySubs:[];const base=f.links.withSub;
+  drawer(`<h2 style="margin:0 0 4px">${esc(f.name)}</h2><p class="dim" style="margin:0 0 14px;font-size:13px">${(TYPES[f.type]||TYPES.bot)[1]} · ${flagOf(f.lang)} ${esc((FN.langs[f.lang]||{}).n||'')}</p>
+   <div class="card" style="background:var(--bg)"><b>Make a tracking link</b><p class="hint" style="margin:2px 0 8px">Give each media buyer, ad set or creative its own sub-ID. Everyone who comes in through it is counted below: sign-ups, deposits and $.</p>
+    <div class="row"><input class="inp" id="lkSub" placeholder="${mine.length?esc(mine[0])+'-ad1':'e.g. joe-tiktok-1'}" style="flex:1" oninput="fnLinkShow('${slug}')"><button class="btn sun" onclick="${f.type==='join'?`fnInvite('${slug}')`:`fnCopy()`}">${f.type==='join'?'Create invite link':'Copy link'}</button></div>
+    ${mine.length?`<span class="hint">Your sub-IDs start with: ${mine.map(esc).join(', ')}</span>`:''}
+    <pre id="lkOut" style="margin-top:8px">${f.type==='join'?'Type a sub-ID, then create its invite link.':esc(f.links.base)}</pre></div>
+   <h3 style="margin-top:16px">By sub-ID</h3><div class="tw"><table><thead><tr><th>Sub-ID</th><th>People</th><th>Opened</th><th>Accounts</th><th>Funded</th><th>Deposits</th></tr></thead><tbody>${d.rows.map(r=>`<tr><td><b>${esc(r.g)}</b></td><td>${r.users}</td><td>${pc(r.opened,r.users)}</td><td>${pc(r.accounts,r.users)}</td><td>${r.funded} · ${pc(r.funded,r.users)}</td><td>${money(r.deposits)}</td></tr>`).join('')||'<tr><td colspan="6" class="dim">Nobody yet. Share a link and people show up here.</td></tr>'}</tbody></table></div>
+   ${d.links.length?`<h3 style="margin-top:16px">Invite links</h3>${d.links.map(l=>`<div class="kv2"><b>${esc(l.sub||'(no sub)')}</b><code>${esc(l.invite_link)}</code></div>`).join('')}`:''}`);
+  window.FNLK=f}
+function fnLinkShow(){const f=window.FNLK;if(!f||f.type==='join')return;const s=$('lkSub').value.trim().replace(/[^A-Za-z0-9-]/g,'');$('lkOut').textContent=s?f.links.withSub.replace('SUB',s):f.links.base}
+function fnCopy(){const t=$('lkOut').textContent;navigator.clipboard.writeText(t).then(()=>toast('Link copied')).catch(()=>toast('Select the link and copy it'))}
+async function fnInvite(slug){const sub=$('lkSub').value.trim();if(!sub)return toast('Type a sub-ID first');try{const d=await api('/api/admin/funnels/invite',{slug,sub});$('lkOut').textContent=d.link;navigator.clipboard.writeText(d.link).catch(()=>{});toast('Invite link created and copied')}catch(e){toast(e.message)}}
+async function botAdd(){try{const d=await api('/api/admin/bots/add',{token:$('bTok').value,lang:$('bLang').value});$('bTok').value='';$('bNext').textContent='Connected @'+d.bot.username+' and made the funnel "'+d.funnel+'".\n\nNext: '+d.next;$('bNext').classList.remove('hide');loadFunnels()}catch(e){toast(e.message)}}
+async function botUpd(id,v){try{await api('/api/admin/bots/update',{id,...v});toast('Saved');loadFunnels()}catch(e){toast(e.message)}}
+
+/* ---------------- languages ---------------- */
+let LG=null;
+async function loadLanguages(){LG=await api('/api/admin/languages');const app=(window.ZB_APP_URL||'https://app.zubabot.com');
+  $('lgList').innerHTML=LG.langs.map(l=>{const pct=l.strings?Math.min(100,Math.round(l.strings/(l.strings+l.missing)*100)):0;return `<div class="card lg ${l.live?'live':''}">
+    <div class="row" style="flex-wrap:nowrap"><span class="lg-f">${l.flag}</span><div style="flex:1;min-width:0"><b class="lg-n">${esc(l.n)}</b><span class="dim lg-s">${l.live?'<span class="tag t-live">Live</span>':'<span class="tag t-open">Off</span>'} · support: <b style="color:var(--ink)">${esc(l.support||'—')}</b> · mentor: <b style="color:var(--ink)">${esc(l.mentor||'—')}</b>${l.mentorOn?' (lives on)':' (no lives yet)'}</span></div>
+      <button class="sw ${l.live?'on':''}" title="${l.live?'Live':'Off'}" onclick="lgLive('${l.code}',${!l.live})"></button></div>
+    <div style="margin-top:12px"><div class="row" style="justify-content:space-between"><span class="dim" style="font-size:12px">Translated</span><b style="font-size:12px">${pct}% · ${l.strings.toLocaleString()} texts${l.missing?' · '+l.missing+' new':''}${l.edited?' · '+l.edited+' edited by you':''}</b></div><div class="bar" style="margin-top:6px"><i style="width:${pct}%"></i></div></div>
+    <div class="row" style="margin-top:12px"><a class="btn sm" href="${app}/?l=${l.code}&preview=1" target="_blank" rel="noopener">Preview app</a><button class="btn sm" onclick="lgTexts('${l.code}')">Edit texts</button><button class="btn sm" onclick="lgRegion('${l.code}')">Support & mentor</button><button class="btn sm" onclick="lgAis('${l.code}')">Local AI traders</button>${l.missing?`<button class="btn sm sun" onclick="lgFill('${l.code}',this)">Translate ${l.missing} new</button>`:''}</div></div>`}).join('')}
+async function lgLive(l,on){if(on&&!confirm('Switch this language on? People from its funnels will see the app, bot and support in this language.'))return;try{await api('/api/admin/languages/live',{lang:l,on});toast(on?'Live':'Off');loadLanguages()}catch(e){toast(e.message)}}
+async function lgFill(l,b){b.disabled=true;b.textContent='Translating…';try{const d=await api('/api/admin/languages/fill',{lang:l});toast(d.ok?d.done+' translated':d.error==='no_ai_key'?'Add the AI key first (AI engine)':d.error)}catch(e){toast(e.message)}loadLanguages()}
+async function lgTexts(l,qq='',only=''){const d=await api('/api/admin/languages/strings?lang='+l+'&q='+encodeURIComponent(qq)+'&only='+only);const L=LG.langs.find(x=>x.code===l);
+  drawer(`<h2 style="margin:0 0 4px">${L.flag} ${esc(L.n)} · texts</h2><p class="dim" style="margin:0 0 12px;font-size:13px">English on top, the translation below. Change it and press Save. Keep {0} {1} {name}: they're numbers and names.</p>
+   <div class="row"><input class="inp" id="lgQ" value="${esc(qq)}" placeholder="Search English or ${esc(L.n)}…" style="flex:1" onkeydown="if(event.key==='Enter')lgTexts('${l}',this.value,'${only}')"><button class="btn" onclick="lgTexts('${l}',$('lgQ').value,'${only}')">Search</button></div>
+   <div class="chips" style="margin-top:8px">${[['','All'],['edit','Edited by you'],['ai','Made by the AI']].map(([k,n])=>`<span class="chip ${only===k?'on':''}" onclick="lgTexts('${l}',$('lgQ').value,'${k}')">${n}</span>`).join('')}</div>
+   ${d.missing.length?`<div class="note" style="margin-top:10px">${d.missing.length} new texts are waiting for the AI. They translate by themselves within minutes, or <a href="#" onclick="event.preventDefault();lgFill('${l}',this)">translate now</a>.</div>`:''}
+   <div style="margin-top:10px">${d.rows.map((r,i)=>`<div class="lg-row"><div class="lg-en">${esc(r.key)}</div><textarea rows="${Math.min(5,Math.ceil(r.text.length/60)||1)}" id="lgT${i}">${esc(r.text)}</textarea><div class="row" style="margin-top:4px"><span class="tag ${r.src==='edit'?'t-human':r.src==='ai'?'t-test':'t-open'}">${r.src==='edit'?'edited':r.src==='ai'?'AI':'ready-made'}</span><button class="btn sm" style="margin-left:auto" onclick="lgSave('${l}',${i})">Save</button></div></div>`).join('')||'<p class="dim">Nothing matches.</p>'}</div>`);
+  window.LGROWS=d.rows}
+async function lgSave(l,i){const r=window.LGROWS[i];try{await api('/api/admin/languages/string',{lang:l,key:r.key,text:$('lgT'+i).value});toast('Saved: it shows in the app within a minute')}catch(e){toast(e.message.includes('placeholder')?'Keep the {0} {1} {name} parts':e.message)}}
+async function lgRegion(l){const d=await api('/api/admin/languages/region?lang='+l);const m=d.mentor||{};const L=LG.langs.find(x=>x.code===l);
+  drawer(`<h2 style="margin:0 0 4px">${L.flag} ${esc(L.n)} · support & mentor</h2><p class="dim" style="margin:0 0 12px;font-size:13px">These names are used everywhere in this language: the app, the bot, the AI answers and follow-ups.</p>
+   <div class="card" style="background:var(--bg)"><b>Support assistant</b><label class="f" style="margin-top:8px">Name<input id="rgSup" value="${esc(d.support||'')}"></label></div>
+   <div class="card" style="background:var(--bg);margin-top:10px"><b>Lead mentor (lives)</b><p class="hint" style="margin:2px 0 8px">Replaces Roland in this language. Lives show only when there's a live link and “Lives on” is switched on.</p>
+    <div class="grid g2"><label class="f">Name<input id="rgMn" value="${esc(m.name||'')}"></label><label class="f">Title<input id="rgMr" value="${esc(m.role||'Lead mentor')}"></label></div>
+    <label class="f">About (one line)<input id="rgMb" value="${esc(m.bio||'')}"></label>
+    <label class="f">Photo (path or link)<input id="rgMp" value="${esc(m.photo||'')}" placeholder="mentors/lead-${l}.jpg"></label>
+    <div class="grid g3"><label class="f">Live times<input id="rgMt" value="${esc((m.times||[]).join(', '))}" placeholder="12:00, 20:00"></label><label class="f">Time zone label<input id="rgMz" value="${esc(m.tz||'')}" placeholder="BRT"></label><label class="f">Hours from UTC<input id="rgMo" type="number" step="0.5" value="${m.offset??0}"></label></div>
+    <label class="f">Live link (Telegram or YouTube live)<input id="rgMl" value="${esc(m.link||'')}" placeholder="https://t.me/…"></label>
+    <div class="tog"><button class="sw ${m.on?'on':''}" id="rgMon" onclick="this.classList.toggle('on')"></button>Lives on</div></div>
+   <div class="row" style="margin-top:10px"><button class="btn sun" onclick="lgRegionSave('${l}')">Save</button><button class="btn" onclick="closeDrw()">Cancel</button></div>`)}
+async function lgAis(l){const d=await api('/api/admin/languages/roster?lang='+l);const L=LG.langs.find(x=>x.code===l);const loc=Object.entries(d.roster||{}).filter(([k,a])=>a&&a.local);
+  drawer(`<h2 style="margin:0 0 4px">${L.flag} ${esc(L.n)} · local AI traders</h2><p class="dim" style="margin:0 0 12px;font-size:13px">All the usual AI traders speak ${esc(L.n)} here. These extra ones are from this region and only show in this region (first in the marketplace). They post signals like the others.</p>
+   ${loc.map(([k,a])=>`<div class="fn-bot" style="margin-bottom:8px"><img src="${(window.ZB_APP_URL||'https://app.zubabot.com')}/${esc(a.photo||'faces/'+k+'.jpg')}" alt="" style="width:44px;height:44px;border-radius:50%;object-fit:cover;background:#222" onerror="this.style.visibility='hidden'"><div style="flex:1;min-width:0"><b>${esc(a.name)}</b><span class="dim">${esc(a.style||'')} · ${a.he==='He'?'man':'woman'} · from $${a.min||20}${a.price?' · '+a.price+' coins':' · free'}</span></div><button class="btn sm" onclick='lgAiForm("${l}","${k}")'>Edit</button><button class="sw ${a.on!==false?'on':''}" onclick="lgAiOn('${l}','${k}',${a.on===false})"></button></div>`).join('')||'<p class="dim">None yet.</p>'}
+   <button class="btn sun" style="margin-top:8px" onclick='lgAiForm("${l}","")'>+ Add a local AI trader</button>`);window.LGROS=d.roster}
+function lgAiForm(l,k){const a=(window.LGROS||{})[k]||{he:'She',mk:'forex',min:20,price:0,local:true};
+  drawer(`<h2 style="margin:0 0 12px">${k?'Edit':'New'} local AI trader</h2>
+   <div class="grid g2"><label class="f">Name<input id="aiN" value="${esc(a.name||'')}"></label><label class="f">Key (letters, no spaces)<input id="aiK" value="${esc(k)}" ${k?'disabled':''} placeholder="${l}-maria"></label></div>
+   <div class="grid g2"><label class="f">Woman or man<select id="aiH"><option value="She" ${a.he!=='He'?'selected':''}>Woman</option><option value="He" ${a.he==='He'?'selected':''}>Man</option></select></label><label class="f">Market<select id="aiM"><option value="forex" ${a.mk!=='crypto'?'selected':''}>Forex / OTC</option><option value="crypto" ${a.mk==='crypto'?'selected':''}>Crypto</option></select></label></div>
+   <label class="f">Style (short)<input id="aiS" value="${esc(a.style||'')}" placeholder="Trend rider"></label><label class="f">One line about them (in the language)<input id="aiD" value="${esc(a.desc||'')}"></label>
+   <label class="f">Personality (how they talk)<input id="aiV" value="${esc(a.vibe||'')}" placeholder="warm, funny, patient…"></label>
+   <div class="grid g3"><label class="f">From deposit ($)<input id="aiMin" type="number" value="${a.min||20}"></label><label class="f">Unlock (coins, 0 = free)<input id="aiP" type="number" value="${a.price||0}"></label><label class="f">Photo<input id="aiPh" value="${esc(a.photo||'')}" placeholder="faces/${l}-maria.jpg"></label></div>
+   <div class="row"><button class="btn sun" onclick="lgAiSave('${l}','${k}')">Save</button><button class="btn" onclick="lgAis('${l}')">Back</button></div>`)}
+async function lgAiSave(l,k){const key=(k||$('aiK').value).toLowerCase().replace(/[^a-z0-9-]/g,'');if(!key)return toast('Give it a key');if(!k&&LGROS&&LGROS[key])return toast('That key is taken');
+  try{await api('/api/admin/languages/roster',{lang:l,ai:key,data:{local:true,on:true,name:$('aiN').value,he:$('aiH').value,mk:$('aiM').value,style:$('aiS').value,desc:$('aiD').value,vibe:$('aiV').value,min:+$('aiMin').value,price:+$('aiP').value,photo:$('aiPh').value||('faces/'+key+'.jpg')}});toast('Saved');lgAis(l)}catch(e){toast(e.message)}}
+async function lgAiOn(l,k,on){await api('/api/admin/languages/roster',{lang:l,ai:k,data:{on}});lgAis(l)}
+async function lgRegionSave(l){try{await api('/api/admin/languages/region',{lang:l,support:$('rgSup').value,mentor:{name:$('rgMn').value,role:$('rgMr').value,bio:$('rgMb').value,photo:$('rgMp').value,times:$('rgMt').value.split(/[,\s]+/).filter(Boolean),tz:$('rgMz').value,offset:+$('rgMo').value,link:$('rgMl').value,on:$('rgMon').classList.contains('on')}});closeDrw();toast('Saved');loadLanguages()}catch(e){toast(e.message)}}
+
+
+/* ---------------- security ---------------- */
+let SCF='open';
+async function loadSecurity(){const d=await api('/api/admin/security?status='+SCF);const S=d.settings;const c=k=>(d.counts.find(x=>x.status===k)||{}).n||0;
+  $('scK').innerHTML=kpi('To review',c('open'),'flagged or blocked',c('open')?'alert':'')+kpi('Confirmed',c('confirmed'),'diversion attempts')+kpi('Affiliate IDs',S.affIds.join(', '),'allowed in links')+kpi('Watched chats',d.watch.length,'channels and groups');
+  $('scAff').value=S.affIds.join(', ');$('scAff').disabled=$('scAffB').disabled=ME.role!=='owner';['scOn','scBl','scRm'].forEach(i=>{if($(i))$(i).disabled=ME.role!=='owner'});
+  $('scOn').classList.toggle('on',S.on!==false);$('scBl').classList.toggle('on',S.block!==false);$('scRm').classList.toggle('on',!!S.removeInChannels);
+  $('scH').value=(S.handles||[]).join(', ');$('scD').value=(S.domains||[]).join(', ');$('scW').value=(S.wallets||[]).join(', ');$('scW').disabled=ME.role!=='owner';$('scG').value=S.groupId||'';
+  chips('scF',c=>{SCF=c.dataset.k;loadSecurity()});chipSet('scF',SCF);
+  $('scList').innerHTML=d.events.map(e=>`<div class="sc-ev ${e.severity}"><div class="row" style="flex-wrap:nowrap"><span class="tag ${e.action==='blocked'?'t-loss':'t-draw'}">${e.action==='blocked'?'BLOCKED':'FLAGGED'}</span><b style="flex:1;min-width:0">${esc(e.who||'unknown')}</b><span class="dim" style="font-size:12px">${when(e.at)}</span></div>
+    <div class="dim" style="font-size:12px;margin-top:4px">${esc(e.source)}${e.tg_id?' · user '+esc(e.tg_id):''}${e.chat?' · chat '+esc(e.chat):''} · #${e.id}</div>
+    <div class="sc-why">${e.findings.map(f=>`<div>• ${esc(f.why)}</div>`).join('')}</div><div class="sc-tx">${esc(e.text)}</div>
+    ${e.status==='open'?`<div class="row" style="margin-top:8px"><button class="btn sm" onclick="scRev(${e.id},'ok')">It's fine</button><button class="btn sm loss" onclick="scRev(${e.id},'confirmed')">Confirm diversion</button>${e.who&&e.source.match(/reply|broadcast|flow/)?`<button class="btn sm loss" onclick="scRev(${e.id},'confirmed',1)">Confirm + pause ${esc(e.who)}</button>`:''}${e.tg_id?`<button class="btn sm" onclick="show('inbox');setTimeout(()=>openThread&&openThread('${e.tg_id}'),300)">Open chat</button>`:''}</div>`:`<div class="dim" style="font-size:12px;margin-top:6px">${e.status==='ok'?'Marked OK':'Confirmed'} by ${esc(e.reviewed_by||'')} · ${when(e.reviewed_at)}</div>`}</div>`).join('')||'<p class="dim">Nothing here. 👍</p>';
+  $('scWatch').innerHTML=d.watch.map(w=>`<div class="kv2"><b>${esc(w.title||w.chat_id)}</b><span class="dim" style="font-size:12px">${esc(w.kind)} · ${w.n} posts checked · last ${ago(w.last_at)}</span></div>`).join('')||'None yet.'}
+async function scSave(v){try{await api('/api/admin/security/settings',v);toast('Saved');loadSecurity()}catch(e){toast(e.message)}}
+async function scRev(id,status,pause){try{await api('/api/admin/security/review',{id,status,pause:!!pause});toast('Done');loadSecurity()}catch(e){toast(e.message)}}
+async function scTest(){const d=await api('/api/admin/security/test',{text:$('scT').value});$('scTo').classList.remove('hide');$('scTo').textContent=d.severity==='ok'?'✓ Nothing found':(d.severity==='block'?'🛑 Would be BLOCKED':'⚠️ Would be FLAGGED')+'\n'+d.findings.map(f=>'• '+f.why).join('\n')}
+/* ---------- bot flows ---------- */
+let FLS=null,FLK='';const ACTS={app:'🚀 Open the app',fund:'💳 Fund $ (value = amount)',live:'🔴 Live room',academy:'🎬 Training',invite:'🎁 Invite page',signal:'⚡ Signal Room',coins:'🪙 Get coins',support:'💬 Ask support (reply in chat)',human:'🙋 Talk to a person',url:'🔗 Link (value = https://…)'};
+async function loadFlows(){const d=await api('/api/admin/flows');FLS=d;const F=d.flows;if(!FLK||!F.list[FLK])FLK=F.active;
+  const st=k=>d.stats.find(x=>x.flow===k)||{started:0,opened:0,linked:0,funded:0,usd:0};const pc=(a,b)=>b?Math.round(a/b*100)+'%':'—';
+  $('flList').innerHTML=Object.entries(F.list).map(([k,f])=>{const x=st(k);return `<div class="card" style="padding:12px;margin-bottom:8px;cursor:pointer;${k===FLK?'border-color:var(--sun)':''}" onclick="FLK='${k}';loadFlows()"><div class="row"><b style="flex:1">${esc(f.name)}</b>${k===F.active?'<span class="tag t-win">ACTIVE</span>':''}${F.split&&F.split.to===k?`<span class="tag t-test">TEST ${F.split.pct}%</span>`:''}</div>
+    <div class="dim" style="font-size:12px;margin-top:6px">${x.started} started · ${pc(x.opened,x.started)} opened app · ${pc(x.linked,x.started)} connected · <b style="color:var(--ink)">${pc(x.funded,x.started)} funded</b> · ${money(x.usd)}</div></div>`}).join('')+`<button class="btn sm" onclick="flNew()">+ New flow</button>`;
+  $('flTo').innerHTML='<option value="">No test</option>'+Object.entries(F.list).filter(([k])=>k!==F.active).map(([k,f])=>`<option value="${k}" ${F.split&&F.split.to===k?'selected':''}>${esc(f.name)}</option>`).join('');$('flPct').value=(F.split&&F.split.pct)||0;flDraw()}
+function flDraw(){const F=FLS.flows,f=F.list[FLK];if(!f){$('flEd').innerHTML='';return}
+  const LGS={en:'🇬🇧 English',pt:'🇧🇷 Português',es:'🇪🇸 Español',tl:'🇵🇭 Taglish',fr:'🇫🇷 Français',th:'🇹🇭 ไทย'};
+  $('flEd').innerHTML=`<div class="row"><input class="inp" id="flName" value="${esc(f.name)}" style="flex:1;font-weight:800;min-width:160px"><select class="inp" id="flLang" style="width:auto" title="Language this flow is written in">${Object.entries(LGS).map(([k,n])=>`<option value="${k}" ${(f.lang||'en')===k?'selected':''}>${n}</option>`).join('')}</select></div>
+   <div class="row" style="margin-top:8px"><span class="dim" style="font-size:12px">Make a copy in another language:</span>${Object.entries(LGS).filter(([k])=>k!==(f.lang||'en')).map(([k,n])=>`<button class="btn sm" onclick="flTr('${k}')">${n.split(' ')[0]}</button>`).join('')}</div>
+   ${f.steps.map((st,i)=>`<div class="card fls" style="padding:12px;margin-top:10px"><div class="row"><b>Message ${i+1}</b><span style="margin-left:auto"></span><button class="btn sm" onclick="flMove(${i},-1)">↑</button><button class="btn sm" onclick="flMove(${i},1)">↓</button><button class="btn sm" onclick="flDel(${i})">✕</button></div>
+     <textarea class="flt" rows="3" style="margin-top:8px">${esc(st.text)}</textarea>
+     <div class="row" style="margin-top:6px"><span class="dim" style="font-size:12px">Picture</span><input class="inp fli" placeholder="none, or e.g. iqoption" value="${esc(st.image||'')}" style="width:170px"></div>
+     ${(st.buttons||[]).map((b,j)=>`<div class="row flb" style="margin-top:6px;flex-wrap:nowrap"><input class="inp fbl" value="${esc(b.label)}" placeholder="Button text" style="flex:1;min-width:0"><select class="inp fba" style="width:auto">${Object.entries(ACTS).map(([k,n])=>`<option value="${k}" ${b.action===k?'selected':''}>${n}</option>`).join('')}</select><input class="inp fbv" value="${esc(b.value||'')}" placeholder="value" style="width:110px"><button class="btn sm" onclick="this.parentNode.remove()">✕</button></div>`).join('')}
+     ${(st.buttons||[]).length<4?`<button class="btn sm" style="margin-top:6px" onclick="flAddBtn(${i})">+ Button</button>`:''}</div>`).join('')}
+   <div class="row" style="margin-top:10px">${f.steps.length<8?'<button class="btn sm" onclick="flAddStep()">+ Message</button>':''}</div>
+   <label class="f" style="margin-top:12px">When they tap “Ask support”, the bot replies<input id="flSup" value="${esc(f.supportReply||'')}"></label>
+   <p class="hint">{name} = first name. Messages go out with a short typing pause. Put buttons on the last message so nothing distracts before the call to action. A picture uses Train the AI → Pictures.</p>
+   <div class="row" style="margin-top:8px"><button class="btn sun" onclick="flSave()">Save</button><button class="btn" onclick="flSave(true)">Save as copy</button><button class="btn" onclick="flTest()">Send to my Telegram</button><button class="btn" onclick="flSync();fbOpen({flowKey:FLK})">Open in builder (preview)</button>${FLK!==F.active?`<button class="btn win" onclick="flAct()">Make active</button><button class="btn sm loss" onclick="flRemove()">Delete</button>`:''}</div>`}
+function flRead(){const steps=[...document.querySelectorAll('#flEd .fls')].map(c=>({text:c.querySelector('.flt').value,image:c.querySelector('.fli').value.trim(),buttons:[...c.querySelectorAll('.flb')].map(r=>({label:r.querySelector('.fbl').value,action:r.querySelector('.fba').value,value:r.querySelector('.fbv').value}))}));return {name:$('flName').value,lang:$('flLang')?$('flLang').value:'en',supportReply:$('flSup').value,steps}}
+async function flTr(l){try{await flSave();toast('Translating…');const d=await api('/api/admin/flows',{op:'translate',key:FLK,lang:l});FLK=d.key;toast('Copy made: check it, then save');loadFlows()}catch(e){toast(e.message)}}
+function flSync(){FLS.flows.list[FLK]=flRead()}
+function flAddStep(){flSync();FLS.flows.list[FLK].steps.push({text:'',buttons:[]});flDraw()}
+function flAddBtn(i){flSync();FLS.flows.list[FLK].steps[i].buttons.push({label:'🚀 Launch my AI now',action:'app'});flDraw()}
+function flDel(i){flSync();FLS.flows.list[FLK].steps.splice(i,1);flDraw()}
+function flMove(i,d){flSync();const a=FLS.flows.list[FLK].steps,j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];flDraw()}
+function flNew(){FLK='new'+Date.now().toString(36);FLS.flows.list[FLK]={name:'New flow',supportReply:'Sure 🙌 type your question here.',steps:[{text:'Congrats {name}! 🎉',buttons:[{label:'🚀 Launch my AI now',action:'app'}]}]};flDraw()}
+function loadFlowsLocal(){const F=FLS.flows;flDraw();$('flList').insertAdjacentHTML('beforeend','')}
+async function flSave(copy){const f=flRead();try{const d=await api('/api/admin/flows',{op:'save',key:copy?'':FLK,flow:copy?{...f,name:f.name+' (copy)'}:f});FLK=d.key;toast('Saved');loadFlows()}catch(e){toast(e.message)}}
+async function flAct(){await flSave();await api('/api/admin/flows',{op:'activate',key:FLK});toast('Active: new people get this flow');loadFlows()}
+async function flRemove(){if(!confirm('Delete this flow?'))return;try{await api('/api/admin/flows',{op:'delete',key:FLK});FLK='';loadFlows()}catch(e){toast(e.message)}}
+async function flSplit(){await api('/api/admin/flows',{op:'split',to:$('flTo').value,pct:+$('flPct').value});toast('Saved');loadFlows()}
+async function flTest(){try{await api('/api/admin/flows',{op:'test',flow:flRead()});toast('Sent to your Telegram')}catch(e){toast(e.message.includes('connect')?'Connect your Telegram in My alerts first':e.message)}}
+async function loadFunnel(F){loadFlows();$('fnDesc').value=F.description;$('fnShort').value=F.short;$('fnOn').classList.toggle('on',!!F.nudgeOn);$('fnEvery').value=F.nudgeEveryMin;$('fnHours').value=F.nudgeHours;$('fnDel').classList.toggle('on',!!F.deleteOld);$('fnSlow').value=F.slowAfter}
+async function saveFunnel(){try{await api('/api/admin/settings',{key:'funnel',value:{description:$('fnDesc').value,short:$('fnShort').value,nudgeOn:$('fnOn').classList.contains('on'),nudgeEveryMin:+$('fnEvery').value,nudgeHours:$('fnHours').value.trim(),deleteOld:$('fnDel').classList.contains('on'),slowAfter:+$('fnSlow').value}});toast('Saved. The bot uses it now.')}catch(e){toast(e.message)}}
+async function saveSupport(){try{await api('/api/admin/settings',{key:'support',value:{name:$('sName').value.trim()||'Emily',introOnTakeover:$('sIntro').classList.contains('on'),askRating:$('sRate').classList.contains('on'),slaMin:+$('sSla').value,aiBackMin:+$('sBack').value,idleBackH:+$('sIdle').value,humanWords:$('sWords').value}});toast('Saved')}catch(e){toast(e.message)}}
+async function saveMedia(){try{await api('/api/admin/settings',{key:'media',value:{chartsFrom:+$('mdCf').value,chartsPerDay:+$('mdCp').value,voiceFrom:+$('mdVf').value,voicePerDayPro:+$('mdVp').value,voicePerDayMax:+$('mdVm').value,maxFrom:+$('mdMx').value,voiceReplyMax:$('mdVr').classList.contains('on'),chartUnlockCoins:+$('mdUc').value,chartsPerDayUnlocked:+$('mdUp').value}});toast('Saved')}catch(e){toast(e.message)}}
+async function saveFree(){try{await api('/api/admin/settings',{key:'free',value:{on:$('frOn').classList.contains('on'),firstDays:Math.max(1,+$('frFirst').value||90),extendDays:Math.max(1,+$('frExt').value||180),activeDays:Math.max(1,+$('frAct').value||30)}});toast('Saved')}catch(e){toast(e.message)}}
+async function saveFollow(){try{await api('/api/admin/settings',{key:'followups',value:{on:$('fOn').classList.contains('on'),quiet:$('fQuiet').value.trim()}});await api('/api/admin/settings',{key:'alerts',value:{bigDeposit:+$('aBig').value}});toast('Saved')}catch(e){toast(e.message)}}
+
+/* strategy */
+const SF=['everySec','expiryMin','maxOpenPerPair','leadSec','trendBias','emaFast','emaSlow','trendMinPct','confMin','confMax','payout','baseStake'];
+async function loadStrategy(){const d=await api('/api/admin/strategy');ST=d.strategy;modeUI();SF.forEach(k=>$(k).value=ST[k]);$('skipFlat').classList.toggle('on',ST.skipFlat);$('mgOn').classList.toggle('on',ST.martingale.on);$('mgSame').classList.toggle('on',ST.martingale.sameDir);$('mgSteps').value=ST.martingale.steps;$('mgMult').value=ST.martingale.mult;$('testers').value=ST.testers.join(', ');$('alignMinute').classList.toggle('on',!!ST.alignMinute);$('kind').value=ST.kind||'digital';renderAis(ST.ais||[]);const O=ST.others||{};$('oOn').classList.toggle('on',O.on!==false);$('oStr').value=O.strategy||'auto';$('oFb').classList.toggle('on',ST.fallbackRandom!==false);$('oEvery').value=O.everySec||900;$('oExp').value=String(O.expiry||0);$('oCount').textContent=Math.max(0,(ST.aiList||[]).filter(a=>!(ST.ais||[]).some(x=>x.key===a.key)).length);renderPairs(ST.pairs)}
+const SNAME={auto:'Auto (from its style)',momentum:'Momentum (trend + RSI)',reversal:'Reversal (RSI extremes)',breakout:'Breakout (20-min range)',trend:'Trend bias (shared)',custom:'Custom',random:'Random (testing)'};
+function renderAis(a){const P=(ST&&ST.pairs||[]).map(p=>p.s);$('aiKeys').innerHTML=(ST&&ST.aiList||[]).map(x=>`<option value="${esc(x.key)}">${esc(x.name)} · ${esc(x.style||'')}</option>`).join('');
+  $('aiRows').innerHTML=a.map((x,i)=>{const c=x.custom||{};const nm=(ST&&ST.aiList||[]).find(y=>y.key===x.key);return `<div class="card air" style="background:var(--bg);padding:12px">
+   <div class="row" style="flex-wrap:nowrap"><button class="sw ${x.on?'on':''}" onclick="this.classList.toggle('on')"></button><input class="inp ak" list="aiKeys" value="${esc(x.key)}" placeholder="AI key, e.g. viza" style="flex:1;min-width:0"><span class="dim" style="font-size:12px;white-space:nowrap">${esc(nm?nm.name:'')}</span><button class="btn sm" onclick="this.closest('.air').remove()" title="Remove">✕</button></div>
+   <div class="grid g3" style="margin-top:8px;gap:8px"><label class="f" style="margin:0">Signals come from<select class="aso"><option value="auto" ${x.source!=='external'?'selected':''}>Built-in strategy</option><option value="external" ${x.source==='external'?'selected':''}>Outside only (webhook / team)</option></select></label><label class="f" style="margin:0">Strategy<select class="as">${['auto','momentum','reversal','breakout','trend','custom','random'].map(v=>`<option value="${v}" ${x.strategy===v?'selected':''}>${SNAME[v]}</option>`).join('')}</select></label>
+    <label class="f" style="margin:0">Trade length<select class="ax">${[1,2,3,5,10,15].map(m=>`<option value="${m}" ${+x.expiry===m?'selected':''}>${m} min</option>`).join('')}</select></label>
+    <label class="f" style="margin:0">Every (sec, 0 = shared)<input class="ae" type="number" min="0" value="${x.everySec||0}"></label></div>
+   <div class="chips ap" style="margin-top:8px">${P.map(p=>`<span class="chip ${(x.pairs||[]).includes(p)?'on':''}" data-p="${esc(p)}" onclick="this.classList.toggle('on')">${esc(p)}</span>`).join('')}</div>
+   <div class="grid g3 acu ${x.strategy==='custom'?'':'hide'}" style="margin-top:8px;gap:8px"><label class="f" style="margin:0">Bias (0–1)<input class="cb" type="number" step="0.05" min="0" max="1" value="${c.bias??0.7}"></label><label class="f" style="margin:0">Fast / slow avg<span class="row" style="gap:4px;flex-wrap:nowrap"><input class="cf" type="number" value="${c.emaFast||9}"><input class="cs" type="number" value="${c.emaSlow||21}"></span></label><label class="f" style="margin:0">Min gap %<input class="cm" type="number" step="0.005" value="${c.minPct??0.01}"></label>
+    <label class="f" style="margin:0">Active hours WAT<input class="ch" placeholder="e.g. 8-22" value="${esc(c.hours||'')}"></label><label class="row dim" style="margin-top:18px;font-size:12.5px"><input type="checkbox" class="ck" ${c.skipFlat?'checked':''}> skip when flat</label></div>
+   <input class="inp an" style="margin-top:8px" placeholder="Note for the team (optional), e.g. Roland’s gold breakout rules" value="${esc(x.note||'')}"></div>`}).join('')||'<p class="dim">No AIs. Add one.</p>';
+  document.querySelectorAll('#aiRows .as').forEach(sel=>sel.onchange=()=>sel.closest('.air').querySelector('.acu').classList.toggle('hide',sel.value!=='custom'))}
+function readAis(){return [...document.querySelectorAll('#aiRows .air')].map(r=>({key:r.querySelector('.ak').value.trim(),on:r.querySelector('.sw').classList.contains('on'),expiry:+r.querySelector('.ax').value,strategy:r.querySelector('.as').value,source:r.querySelector('.aso').value,everySec:+r.querySelector('.ae').value||0,
+  pairs:[...r.querySelectorAll('.ap .chip.on')].map(c=>c.dataset.p),note:r.querySelector('.an').value,custom:{bias:+r.querySelector('.cb').value,emaFast:+r.querySelector('.cf').value,emaSlow:+r.querySelector('.cs').value,minPct:+r.querySelector('.cm').value,hours:r.querySelector('.ch').value.trim(),skipFlat:r.querySelector('.ck').checked}})).filter(x=>x.key)}
+function addAi(){const a=readAis();a.push({key:'',on:true,expiry:1,strategy:'random',pairs:[]});renderAis(a)}
+function allRandom(){const a=readAis().map(x=>({...x,strategy:'random'}));renderAis(a);toast('All set to Random. Press Save strategy.')}
+function renderPairs(ps){$('pairs').innerHTML=ps.map((p,i)=>`<div class="pr" data-i="${i}"><input value="${esc(p.s)}" class="ps"><button class="sw ${p.on?'on':''}" onclick="this.classList.toggle('on')"></button>
+  <select class="psrc">${['binance','twelvedata','manual'].map(x=>`<option ${p.src===x?'selected':''} value="${x}">${{binance:'Binance',twelvedata:'Twelve Data',manual:'Manual'}[x]}</option>`).join('')}</select>
+  <select class="ptr">${['auto','up','down','flat'].map(x=>`<option ${p.trend===x?'selected':''} value="${x}">${{auto:'Auto (from price)',up:'Up',down:'Down',flat:'Flat (50/50)'}[x]}</option>`).join('')}</select><button class="btn sm" onclick="this.parentNode.remove()">✕</button></div>`).join('')}
+function addPair(){const d=document.createElement('div');$('pairs').insertAdjacentHTML('beforeend','');const ps=readPairs();ps.push({s:'',on:true,src:'manual',trend:'auto'});renderPairs(ps)}
+function readPairs(){return [...document.querySelectorAll('#pairs .pr')].map(r=>({s:r.querySelector('.ps').value,on:r.querySelector('.sw').classList.contains('on'),src:r.querySelector('.psrc').value,trend:r.querySelector('.ptr').value})).filter(p=>p.s.trim())}
+async function saveStrategy(){const b={};SF.forEach(k=>b[k]=+$(k).value);b.skipFlat=$('skipFlat').classList.contains('on');b.martingale={on:$('mgOn').classList.contains('on'),steps:+$('mgSteps').value,mult:+$('mgMult').value,sameDir:$('mgSame').classList.contains('on')};b.testers=$('testers').value;b.pairs=readPairs();b.ais=readAis();b.fallbackRandom=$('oFb').classList.contains('on');b.others={on:$('oOn').classList.contains('on'),strategy:$('oStr').value,everySec:+$('oEvery').value||900,expiry:+$('oExp').value};b.alignMinute=$('alignMinute').classList.contains('on');b.kind=$('kind').value;
+  try{const d=await api('/api/admin/strategy',b);ST=d.strategy;loadStrategy();toast('Strategy saved')}catch(e){toast('Error: '+e.message)}}
+/* signals */
+function dirUI(){$('mBuy').className='btn '+(mdir==='buy'?'win':'');$('mSell').className='btn '+(mdir==='sell'?'loss':'');$('mBuy').style.flex=$('mSell').style.flex='1'}
+async function postSignal(){try{await api('/api/admin/signals',{pair:$('mPair').value,dir:mdir,expiryMin:+$('mExp').value,conf:+$('mConf').value,mode:$('mMode').value,note:$('mNote').value,ai:$('mAi').value});toast('Signal sent');loadSignals()}catch(e){toast('Error: '+e.message)}}
+const fmtP=v=>v==null?'—':(+v).toPrecision(6).replace(/\.?0+$/,'');
+function ends(s){if(s.status!=='open')return '';const l=Math.max(0,Math.round((s.expires_at-Date.now())/1000));return Math.floor(l/60)+':'+String(l%60).padStart(2,'0')}
+async function loadSignals(){const d=await api('/api/admin/signals?limit=80'+($('fMode').value?'&mode='+$('fMode').value:''));
+  $('sigBody').innerHTML=d.signals.map(s=>`<tr><td>${s.id}<br><span class="tag t-${s.mode}">${s.mode}</span></td><td>${esc(s.ai||'—')}<br><span class="hint">${s.expiry_min}m${s.entry_at?' · '+new Date(s.entry_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):''}</span></td><td><b>${esc(s.pair)}</b>${s.source==='manual'?'<br><span class="hint">manual'+(s.note&&s.note!=='martingale'?': '+esc(s.note):'')+'</span>':''}</td><td><span class="tag t-${s.dir}">${s.dir.toUpperCase()}</span></td><td>${s.step}</td><td>$${s.stake}</td><td>${s.trend}</td><td>${s.conf}%</td><td>${fmtP(s.entry)} → ${fmtP(s.exit)}</td><td>${ends(s)}</td>
+  <td>${s.status==='open'||s.status==='unresolved'?`<span class="tag t-${s.status}">${s.status}</span>${s.entry==null||s.status==='unresolved'?` <button class="btn sm win" onclick="resolveSig(${s.id},'win')">W</button> <button class="btn sm loss" onclick="resolveSig(${s.id},'loss')">L</button>`:''}`:`<span class="tag t-${s.status}">${s.status.toUpperCase()}</span>`}</td></tr>`).join('')||'<tr><td colspan="11" style="color:var(--dim)">No signals yet. Switch to Test mode and turn on a pair.</td></tr>'}
+async function resolveSig(id,status){try{await api('/api/admin/signals/resolve',{id,status});loadSignals()}catch(e){toast(e.message)}}
+/* results */
+async function loadResults(){const d=await api(`/api/admin/results?mode=${$('rMode').value}&hours=${$('rHours').value}`);const R=d.results;
+  $('rKpis').innerHTML=kpi('Win rate',R.winRate+'%',`${R.wins} W · ${R.losses} L`)+kpi('Chains recovered',R.chains.recoveryRate+'%',`${R.chains.won} won · ${R.chains.lost} lost all steps`)+kpi('Simulated P/L',money(R.simulated.pl),`$${R.simulated.stake} stake · ${Math.round(R.simulated.payout*100)}% payout`)+kpi('Worst drawdown',money(R.simulated.maxDrawdown),`longest losing chain run: ${R.chains.worstLosingStreak}`);
+  $('rPairs').innerHTML=R.pairs.map(p=>`<tr><td><b>${esc(p.pair)}</b></td><td>${p.n}</td><td>${p.winRate}%</td><td>${p.withTrend?p.withTrendWinRate+'%':'—'}</td></tr>`).join('')||'<tr><td colspan="4" style="color:var(--dim)">Nothing scored yet</td></tr>';
+  $('rAis').innerHTML=(R.ais||[]).map(a=>`<tr><td><b>${esc(a.ai)}</b></td><td>${a.n}</td><td>${a.winRate}%</td></tr>`).join('')||'<tr><td colspan="3" style="color:var(--dim)">Nothing scored yet</td></tr>';
+  const ws=R.chains.wonAtStep,tot=R.chains.won+R.chains.lost||1;
+  $('rMg').innerHTML=Object.keys(ws).sort().map(k=>`<div style="margin-bottom:8px"><div class="row" style="justify-content:space-between"><span>Won at step ${k}</span><b>${ws[k]}</b></div><div class="bar"><i style="width:${ws[k]/tot*100}%;background:var(--win)"></i></div></div>`).join('')+
+   `<div style="margin-bottom:8px"><div class="row" style="justify-content:space-between"><span>Lost every step</span><b>${R.chains.lost}</b></div><div class="bar"><i style="width:${R.chains.lost/tot*100}%;background:var(--loss)"></i></div></div>`+
+   `<div class="hint" style="margin-top:10px">Single-trade win rate by step: ${R.steps.map(s=>`step ${s.step}: ${s.winRate}% (${s.n})`).join(' · ')||'—'}</div>`}
+async function resetTest(){if(!confirm('Delete all TEST signals and results?'))return;await api('/api/admin/reset-test',{});toast('Test data cleared');loadResults()}
+
+</script>
+<script>
+/* Funnel & flow builder: 3 steps (type -> bot & language -> welcome messages) with a live Telegram preview.
+   Loaded by admin.html. Uses the admin helpers: $, api, esc, toast, FN (funnels data), loadFunnels, fnLinks, loadFlows. */
+(function () {
+  const TYPES = {
+    join: {ic: '🚪', n: 'Auto-accept channel', d: 'Your ads send people to a channel. They tap "Request to join", the bot accepts them and sends the welcome.'},
+    bot: {ic: '🤖', n: 'Welcome bot', d: 'Your ads open the bot. They tap START, get the welcome messages, then open the app.'},
+    direct: {ic: '⚡', n: 'Straight to the app', d: 'Your ads open the mini app right away. No messages, fastest path to sign-up.'}};
+  const ACTS = {app: '🚀 Open the app', fund: '💳 Fund $', live: '🔴 Live room', academy: '🎬 Training', signal: '⚡ Signal Room', coins: '🪙 Get coins', invite: '🎁 Invite', support: '💬 Ask support', human: '🙋 Talk to a person', url: '🔗 Link'};
+  const TPL = {
+    classic: {n: 'Classic welcome', steps: [
+      {text: 'Congrats {name}! 🎉 Your 3 months free is activated.', buttons: []},
+      {text: 'Your AI trader is ready. It finds the setups, you approve every trade. Your money stays in your own IQ Option account.', buttons: []},
+      {text: 'Tap below and launch your AI now 👇', buttons: [{label: '🚀 Launch my AI now', action: 'app'}, {label: '💬 Ask support', action: 'support'}]}]},
+    short: {n: 'Short & direct', steps: [
+      {text: 'Hey {name} 👋 Your AI trader is waiting for you.', buttons: [{label: '🚀 Open Zubabot', action: 'app'}]}]},
+    bonus: {n: 'Bonus urgency', steps: [
+      {text: 'Welcome {name}! 🎁 You have 24 hours to claim +500 bonus coins.', buttons: []},
+      {text: 'Start with $20 on your own IQ Option account and your AI starts sending you signals today.', buttons: []},
+      {text: 'Ready?', buttons: [{label: '💳 Fund $20 and claim', action: 'fund', value: '20'}, {label: '🚀 See the app first', action: 'app'}]}]},
+    live: {n: 'Join the live', steps: [
+      {text: '{name}, welcome to the community 🔴', buttons: []},
+      {text: 'We trade live every day. Come watch the next session and copy the trades with your AI.', buttons: [{label: '🔴 Join the next live', action: 'live'}, {label: '🚀 Open the app', action: 'app'}]}]}};
+  let B = null;           // builder state
+  const clone = (x) => JSON.parse(JSON.stringify(x));
+  const slugOf = (s) => String(s || '').toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 30);
+
+  function ensureShell() {
+    if (document.getElementById('fb')) return;
+    const st = document.createElement('style');
+    st.textContent = `
+#fb{position:fixed;inset:0;z-index:70;background:var(--bg);display:flex;flex-direction:column}
+#fb .fb-top{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line2)}
+#fb .fb-top h2{margin:0;font-size:17px;flex:1;min-width:0}
+#fb .fb-steps{display:flex;gap:6px}#fb .fb-steps span{font-size:11.5px;font-weight:800;letter-spacing:.04em;padding:5px 10px;border-radius:99px;background:var(--card);color:var(--mute);border:1px solid var(--line)}
+#fb .fb-steps span.on{background:var(--sun);color:#1A1500;border-color:var(--sun)}#fb .fb-steps span.done{color:var(--win)}
+#fb .fb-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:0}#fb .fb-ed,#fb .fb-pv{min-width:0}#fb .fb-pvbtn{display:none}@media(max-width:900px){#fb .fb-pvbtn{display:inline-flex}}#fb .chips,#fb .fb-tpl{flex-wrap:wrap}#fb .tgp{flex:none}
+#fb .fb-ed{overflow-y:auto;padding:18px 18px 110px}
+#fb .fb-pv{border-left:1px solid var(--line2);background:var(--side);display:flex;flex-direction:column;align-items:center;padding:18px 12px;overflow-y:auto}
+#fb .fb-foot{position:fixed;left:0;right:0;bottom:0;display:flex;gap:8px;justify-content:flex-end;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line2);z-index:2}
+#fb .fb-types{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+#fb .fb-type{text-align:left;background:var(--card);border:2px solid var(--line);border-radius:16px;padding:16px;color:var(--ink);cursor:pointer;transition:.15s}
+#fb .fb-type:hover{border-color:var(--mute)}#fb .fb-type.on{border-color:var(--sun);box-shadow:0 0 0 4px rgba(255,210,31,.12)}
+#fb .fb-type .i{font-size:28px}#fb .fb-type b{display:block;font-size:15.5px;margin:8px 0 4px}#fb .fb-type small{color:var(--dim);font-size:12.5px;line-height:1.45;display:block}
+#fb .fb-msg{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+#fb .fb-msg textarea{width:100%;min-height:64px;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px;font:inherit;font-size:14px;resize:vertical}
+#fb .fb-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#fb .fb-btn{display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:4px 6px 4px 8px;max-width:100%}
+#fb .fb-btn input{background:transparent;border:0;color:var(--ink);font:inherit;font-size:13px;width:150px;min-width:0}
+#fb .fb-btn select,#fb .fb-btn .v{background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink);font-size:12px;padding:3px}
+#fb .fb-btn .v{width:90px}
+#fb .fb-x{background:none;border:0;color:var(--mute);cursor:pointer;font-size:14px;padding:2px 4px}
+#fb .fb-tpl{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 6px}
+/* phone preview */
+.tgp{width:300px;max-width:100%;height:600px;border-radius:38px;background:#0E1621;border:8px solid #05070C;box-shadow:0 30px 60px rgba(0,0,0,.45);display:flex;flex-direction:column;overflow:hidden;position:relative}
+.tgp .h{display:flex;align-items:center;gap:9px;padding:24px 12px 9px;background:#17212B;color:#fff}
+.tgp .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#FFD21F,#FF9E2C);display:grid;place-items:center;font-weight:900;color:#1A1500;font-size:15px;flex:none}
+.tgp .h b{display:block;font-size:13.5px}.tgp .h small{font-size:11px;color:#6C8EAD}
+.tgp .c{flex:1;overflow-y:auto;padding:10px 8px;background:#0E1621 radial-gradient(circle at 20% 20%,rgba(255,255,255,.03) 0 2px,transparent 3px) 0 0/22px 22px;display:flex;flex-direction:column;gap:5px}
+.tgp .sys{align-self:center;background:rgba(0,0,0,.35);color:#cfd8e3;font-size:11px;padding:3px 9px;border-radius:99px;margin:4px 0}
+.tgp .b{align-self:flex-start;max-width:84%;background:#182533;color:#fff;font-size:13px;line-height:1.38;padding:7px 10px 6px;border-radius:12px 12px 12px 4px;white-space:pre-wrap;word-wrap:break-word;animation:tgin .25s ease}
+.tgp .b.me{align-self:flex-end;background:#2B5278;border-radius:12px 12px 4px 12px}
+.tgp .b .t{display:block;text-align:right;font-size:10px;color:#6C8EAD;margin-top:2px}
+.tgp .img{width:100%;height:110px;border-radius:9px;background:linear-gradient(135deg,#243447,#1b2836);display:grid;place-items:center;color:#6C8EAD;font-size:11px;margin-bottom:6px}
+.tgp .kb{align-self:flex-start;width:84%;display:grid;gap:4px;margin-top:-1px;animation:tgin .25s ease}
+.tgp .kb span{background:rgba(24,37,51,.85);color:#fff;font-size:12.5px;text-align:center;padding:8px 6px;border-radius:9px;font-weight:600}
+.tgp .ty{align-self:flex-start;background:#182533;border-radius:12px;padding:9px 12px;display:flex;gap:4px}.tgp .ty i{width:6px;height:6px;border-radius:50%;background:#6C8EAD;animation:tgdot 1s infinite}.tgp .ty i:nth-child(2){animation-delay:.15s}.tgp .ty i:nth-child(3){animation-delay:.3s}
+.tgp .f{padding:10px;background:#17212B}.tgp .f div{background:#2AABEE;color:#fff;text-align:center;font-weight:800;font-size:13px;padding:11px;border-radius:10px}
+.tgp .ma{position:absolute;inset:60px 0 0;background:#fff;border-radius:16px 16px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#11131A;animation:tgup .35s ease}
+.tgp .ma .z{width:64px;height:64px;border-radius:18px;background:#FFD21F;display:grid;place-items:center;font-weight:900;font-size:30px}
+@keyframes tgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}@keyframes tgdot{0%,100%{opacity:.3}50%{opacity:1}}@keyframes tgup{from{transform:translateY(100%)}to{transform:none}}
+#fb .pv-bar{display:flex;gap:6px;margin-top:12px}
+@media(max-width:900px){#fb .fb-body{grid-template-columns:minmax(0,1fr);grid-auto-rows:auto;align-content:start;overflow-y:auto}#fb .fb-pv{overflow:visible}#fb .fb-ed{overflow:visible;padding-bottom:18px}#fb .fb-pv{border-left:0;border-top:1px solid var(--line2);padding-bottom:110px}#fb .fb-steps{display:none}}
+@media(max-width:520px){#fb .fb-btn input{width:110px}.tgp{height:540px}}`;
+    document.head.appendChild(st);
+    const d = document.createElement('div'); d.id = 'fb'; d.className = 'hide'; document.body.appendChild(d);
+  }
+
+  // ---------- open ----------
+  window.fbOpen = async function (opts = {}) {
+    ensureShell();
+    let flows = {list: {}, active: ''}; try { flows = (await api('/api/admin/flows')).flows; } catch (e) {}
+    const act = flows.list[flows.active];
+    B = {mode: opts.flowKey ? 'flow' : 'funnel', step: opts.flowKey ? 3 : 1, type: 'bot', name: '', slug: '', lang: (window.FNL || 'en'), bot: (FN && FN.bots[0] ? FN.bots[0].id : 0), newTok: '', channel: '', approve: 'instant', delay: 60,
+      flows, flowKey: opts.flowKey || '', flow: opts.flowKey ? clone(flows.list[opts.flowKey] || (window.FLS && FLS.flows.list[opts.flowKey]) || {name: 'New flow', steps: [{text: '', buttons: []}]}) : clone(act ? {name: '', lang: act.lang || 'en', supportReply: act.supportReply || 'Sure 🙌 type your question here.', steps: act.steps} : {name: '', lang: 'en', supportReply: 'Sure 🙌 type your question here.', steps: TPL.classic.steps}),
+      from: opts.flowKey || (act ? flows.active : 'classic'), dirty: false, follow: {...FO_DEF}};
+    if (!B.flow.supportReply) B.flow.supportReply = 'Sure 🙌 type your question here.';
+    document.getElementById('fb').classList.remove('hide'); draw(); play();
+  };
+  window.fbClose = () => { const e = document.getElementById('fb'); if (e) e.classList.add('hide'); clearTimeout(PT); };
+
+  // ---------- render ----------
+  function draw() {
+    const steps = B.mode === 'flow' ? [] : ['1 Type', '2 Bot & language', B.type === 'direct' ? '3 Done' : '3 Welcome messages'];
+    document.getElementById('fb').innerHTML = `<div class="fb-top"><button class="btn sm" onclick="fbClose()" aria-label="Close" style="min-width:38px">✕</button><h2>${B.mode === 'flow' ? 'Edit welcome flow' : 'New funnel'}</h2>
+      <div class="fb-steps">${steps.map((s, i) => `<span class="${i + 1 === B.step ? 'on' : i + 1 < B.step ? 'done' : ''}">${s}</span>`).join('')}</div></div>
+      <div class="fb-body"><div class="fb-ed" id="fbEd">${B.step === 1 ? s1() : B.step === 2 ? s2() : s3()}</div>
+      <div class="fb-pv"><div class="dim" style="font-size:12px;margin-bottom:10px;text-align:center">Live preview · what a new person sees</div>${phone()}
+        <div class="pv-bar"><button class="btn sm" onclick="fbPlay()">▶ Replay</button>${B.mode === 'flow' || B.step === 3 ? `<button class="btn sm" onclick="fbTest()">Send to my Telegram</button>` : ''}</div></div></div>
+      <div class="fb-foot"><button class="btn fb-pvbtn" style="margin-right:auto" onclick="document.querySelector('#fb .fb-pv').scrollIntoView({behavior:'smooth'});fbPlay()">👁 Preview</button>${B.step > 1 && B.mode !== 'flow' ? '<button class="btn" onclick="fbGo(-1)">Back</button>' : ''}${(B.step < 3 && !(B.step === 2 && B.type === 'direct')) ? '<button class="btn sun" onclick="fbGo(1)">Next</button>' : `<button class="btn sun" id="fbSave" onclick="fbSave()">${B.mode === 'flow' ? 'Save flow' : 'Create funnel'}</button>`}</div>`;
+    bind(); if (document.getElementById('fbFOn')) { foBind('fbF'); const keep = () => { const v = foVal('fbF'); if (v) B.follow = v; }; document.getElementById('fbF' + 'Box').parentElement.addEventListener('click', () => setTimeout(keep, 0)); document.getElementById('fbF' + 'Box').parentElement.addEventListener('input', keep); }
+  }
+  function s1() {
+    return `<h3 style="margin:0 0 4px">Where does your traffic land?</h3><p class="dim" style="margin:0 0 14px;font-size:13px">Pick one. Every funnel shares the same users, AIs, team and stats.</p>
+      <div class="fb-types">${Object.entries(TYPES).map(([k, t]) => `<button class="fb-type ${B.type === k ? 'on' : ''}" onclick="fbSet('type','${k}')"><span class="i">${t.ic}</span><b>${t.n}</b><small>${t.d}</small></button>`).join('')}</div>`;
+  }
+  function s2() {
+    const L = FN.langs; const bots = FN.bots;
+    return `<label class="f">Funnel name<input id="fbName" value="${esc(B.name)}" placeholder="e.g. Kenya · TikTok · March"></label>
+      <div class="f-lbl">Language</div><div class="chips">${Object.entries(L).map(([k, v]) => `<span class="chip ${B.lang === k ? 'on' : ''}" onclick="fbSet('lang','${k}')">${v.flag} ${esc(v.n)}${k !== 'en' && !v.live ? ' <i class="dim" style="font-style:normal">(off)</i>' : ''}</span>`).join('')}</div>
+      <div class="f-lbl" style="margin-top:12px">Bot</div>
+      <div class="chips">${bots.map((b) => `<span class="chip ${B.bot === b.id && !B.newTok ? 'on' : ''}" onclick="fbSet('bot',${b.id})">${L[b.lang] ? L[b.lang].flag : ''} @${esc(b.username || 'main bot')}</span>`).join('')}<span class="chip ${B.newTok !== '' ? 'on' : ''}" onclick="fbSet('newbot',1)">+ Connect a new bot</span></div>
+      ${B.newTok !== '' ? `<label class="f" style="margin-top:8px">Token from @BotFather<input id="fbTok" value="${esc(B.newTok === ' ' ? '' : B.newTok)}" placeholder="123456:ABC…"><span class="hint">You can run as many bots as you like in one language. They all share the same users and stats.</span></label>` : ''}
+      ${B.type === 'join' ? `<label class="f" style="margin-top:10px">Channel<input id="fbCh" value="${esc(B.channel)}" placeholder="@yourchannel or -100…"><span class="hint">Add the bot to the channel as an admin with "Invite users". Then make one invite link per sub-ID in Links.</span></label>
+        <div class="f-lbl">Accept join requests</div><div class="chips">${[['instant', 'Instantly'], ['delay', 'After a short wait'], ['off', 'Manually']].map(([k, n]) => `<span class="chip ${B.approve === k ? 'on' : ''}" onclick="fbSet('approve','${k}')">${n}</span>`).join('')}</div>
+        ${B.approve === 'delay' ? `<label class="f" style="margin-top:8px">Wait (seconds)<input id="fbDelay" type="number" min="0" max="86400" value="${+B.delay || 60}"></label>` : ''}` : ''}
+      ${B.type === 'direct' ? '<p class="hint" style="margin-top:12px">Straight to the app has no welcome messages. Tap Create: you get the links for your ads right away.</p>' : ''}`;
+  }
+  function s3() {
+    const F = B.flow; const others = Object.entries(B.flows.list);
+    return `${B.mode === 'flow' ? `<label class="f">Flow name<input id="fbFName" value="${esc(F.name || '')}"></label>` : ''}
+      <div class="f-lbl">Start from a template</div><div class="fb-tpl">${Object.entries(TPL).map(([k, t]) => `<span class="chip ${B.from === k ? 'on' : ''}" onclick="fbFrom('${k}')">✨ ${t.n}</span>`).join('')}</div>
+      <label class="f" style="margin-top:6px">…or one of your flows<select class="inp" onchange="this.value&&fbFrom(this.value)"><option value="">Pick a saved flow</option>${others.map(([k, f]) => `<option value="${k}" ${B.from === k ? 'selected' : ''}>${k === B.flows.active ? '⭐ ' : ''}${esc(f.name)}</option>`).join('')}</select></label>
+      <p class="hint" style="margin:0 0 4px">Edit the texts right here: the preview updates as you type. {name} = their first name. Put buttons on the last message.${B.mode === 'funnel' && B.lang !== 'en' && (F.lang || 'en') !== B.lang ? ' This flow is in another language: it is translated to ' + esc(FN.langs[B.lang].n) + ' automatically when sent.' : ''}</p>
+      ${F.steps.map((st, i) => `<div class="fb-msg"><div class="row" style="margin-bottom:6px"><b style="font-size:13px">Message ${i + 1}</b><span style="margin-left:auto"></span><button class="btn sm" onclick="fbMove(${i},-1)" ${i ? '' : 'disabled'}>↑</button><button class="btn sm" onclick="fbMove(${i},1)" ${i < F.steps.length - 1 ? '' : 'disabled'}>↓</button><button class="btn sm" onclick="fbDel(${i})" ${F.steps.length > 1 ? '' : 'disabled'}>✕</button></div>
+        <textarea data-i="${i}" class="fbT" maxlength="900">${esc(st.text)}</textarea>
+        <div class="fb-btns">${(st.buttons || []).map((b, j) => `<span class="fb-btn"><input class="fbBL" data-i="${i}" data-j="${j}" value="${esc(b.label)}" maxlength="60"><select class="fbBA" data-i="${i}" data-j="${j}">${Object.entries(ACTS).map(([k, n]) => `<option value="${k}" ${b.action === k ? 'selected' : ''}>${n}</option>`).join('')}</select>${b.action === 'fund' || b.action === 'url' ? `<input class="v fbBV" data-i="${i}" data-j="${j}" value="${esc(b.value || '')}" placeholder="${b.action === 'fund' ? '20' : 'https://…'}">` : ''}<button class="fb-x" onclick="fbBDel(${i},${j})" aria-label="Remove button">✕</button></span>`).join('')}
+          ${(st.buttons || []).length < 4 ? `<button class="btn sm" onclick="fbBAdd(${i})">+ Button</button>` : ''}
+          <span class="dim" style="font-size:12px;margin-left:auto;align-self:center">Picture <input class="inp fbImg" data-i="${i}" value="${esc(st.image || '')}" placeholder="none" style="width:110px;display:inline-block;padding:4px 8px"></span></div></div>`).join('')}
+      ${F.steps.length < 8 ? '<button class="btn" style="margin-top:10px" onclick="fbAdd()">+ Add a message</button>' : ''}
+      ${B.mode === 'funnel' ? foCard(B.follow, 'fbF') : ''}${B.mode === 'funnel' ? '<p class="hint" style="margin-top:12px">After creating it: links and sub-IDs open right away. Own mentor, affiliate ID and tracking are in the funnel\'s Edit.</p>' : ''}<label class="f" style="margin-top:14px">When they tap "Ask support", the bot replies<input id="fbSup" value="${esc(F.supportReply || '')}" maxlength="300"></label>`;
+  }
+  // ---------- preview ----------
+  const NM = 'Tobi';
+  const botName = () => { if (B.newTok !== '') return 'Your new bot'; const b = FN.bots.find((x) => x.id === B.bot); return b ? (b.title || b.username || 'Zubabot') : 'Zubabot'; };
+  function phone() {
+    return `<div class="tgp" id="tgp"><div class="h"><span class="av">Z</span><div style="min-width:0"><b>${esc(botName())}</b><small>bot</small></div></div><div class="c" id="tgc"></div>${B.type === 'bot' && B.step !== 1 ? '' : ''}<div class="f" id="tgf"></div></div>`;
+  }
+  let PT = 0;
+  function bubble(st, last) {
+    const t = esc(String(st.text || '').replace(/\{name\}/g, NM)) || '<i style="opacity:.5">empty message</i>';
+    const kb = (st.buttons || []).filter((b) => b.label).map((b) => `<span>${esc(b.label)}</span>`).join('');
+    return `<div class="b">${st.image ? `<div class="img">🖼 ${esc(st.image)}</div>` : ''}${t}<span class="t">12:0${Math.min(9, 1 + (last || 0))}</span></div>${kb ? `<div class="kb">${kb}</div>` : ''}`;
+  }
+  function staticPreview() {
+    clearTimeout(PT); const c = document.getElementById('tgc'), f = document.getElementById('tgf'); if (!c) return; const om = document.querySelector('#tgp .ma'); if (om) om.remove();
+    const tp = B.type; let h = '';
+    if (tp === 'direct') { c.innerHTML = '<div class="sys">Ad tapped</div>'; f.innerHTML = ''; c.parentElement.insertAdjacentHTML('beforeend', '<div class="ma"><span class="z">Z</span><b>Zubabot opens</b><span style="font-size:12px;color:#6b7189">Mini app, no chat in between</span></div>'); return; }
+    if (tp === 'join') h += '<div class="sys">Tobi asked to join your channel</div><div class="sys">✓ Request accepted by the bot</div>';
+    else h += `<div class="b me">/start<span class="t">12:00</span></div>`;
+    h += B.flow.steps.map((s, i) => bubble(s, i)).join('');
+    c.innerHTML = h; c.scrollTop = 1e9; f.innerHTML = '';
+  }
+  function play() {
+    clearTimeout(PT); const c = document.getElementById('tgc'), f = document.getElementById('tgf'); if (!c) return;
+    const old = document.querySelector('#tgp .ma'); if (old) old.remove();
+    if (B.type === 'direct' || B.step === 1 && B.type === 'direct') return staticPreview();
+    c.innerHTML = ''; f.innerHTML = B.type === 'bot' ? '<div>START</div>' : '';
+    const seq = []; if (B.type === 'join') { seq.push(['sys', 'Tobi asked to join your channel']); seq.push(['sys', '✓ Request accepted by the bot']); } else seq.push(['me']);
+    B.flow.steps.forEach((s, i) => seq.push(['msg', s, i]));
+    let k = 0;
+    const next = () => { if (!document.getElementById('tgc')) return; const it = seq[k++]; if (!it) return;
+      if (it[0] === 'sys') { c.insertAdjacentHTML('beforeend', `<div class="sys">${esc(it[1])}</div>`); PT = setTimeout(next, 600); }
+      else if (it[0] === 'me') { PT = setTimeout(() => { f.innerHTML = ''; c.insertAdjacentHTML('beforeend', '<div class="b me">/start<span class="t">12:00</span></div>'); PT = setTimeout(next, 500); }, 700); }
+      else { c.insertAdjacentHTML('beforeend', '<div class="ty"><i></i><i></i><i></i></div>'); c.scrollTop = 1e9;
+        PT = setTimeout(() => { const ty = c.querySelector('.ty'); if (ty) ty.remove(); c.insertAdjacentHTML('beforeend', bubble(it[1], it[2])); c.scrollTop = 1e9; PT = setTimeout(next, 450); }, Math.min(1600, 500 + String(it[1].text || '').length * 12)); }
+      c.scrollTop = 1e9; };
+    next();
+  }
+  window.fbPlay = play;
+  // ---------- edits ----------
+  function bind() {
+    const ed = document.getElementById('fbEd'); if (!ed) return;
+    ed.oninput = (e) => { const t = e.target; const i = +t.dataset.i, j = +t.dataset.j; const S = B.flow.steps;
+      if (t.classList.contains('fbT')) S[i].text = t.value; else if (t.classList.contains('fbBL')) S[i].buttons[j].label = t.value; else if (t.classList.contains('fbBV')) S[i].buttons[j].value = t.value; else if (t.classList.contains('fbImg')) S[i].image = t.value.trim();
+      else if (t.id === 'fbName') { B.name = t.value; } else if (t.id === 'fbTok') B.newTok = t.value.trim() || ' '; else if (t.id === 'fbCh') B.channel = t.value.trim(); else if (t.id === 'fbDelay') B.delay = +t.value; else if (t.id === 'fbSup') B.flow.supportReply = t.value; else if (t.id === 'fbFName') B.flow.name = t.value;
+      if (t.closest('.fb-msg')) { B.dirty = true; staticPreview(); } };
+    ed.onchange = (e) => { const t = e.target; if (t.classList.contains('fbBA')) { const i = +t.dataset.i, j = +t.dataset.j; B.flow.steps[i].buttons[j].action = t.value; if (t.value === 'fund' && !B.flow.steps[i].buttons[j].value) B.flow.steps[i].buttons[j].value = '20'; B.dirty = true; redraw(); } };
+  }
+  const redraw = () => { const y = (document.getElementById('fbEd') || {}).scrollTop || 0; draw(); staticPreview(); const e = document.getElementById('fbEd'); if (e) e.scrollTop = y; };
+  window.fbSet = (k, v) => { if (k === 'type') { B.type = v; draw(); play(); return; } if (k === 'lang') B.lang = v; if (k === 'bot') { B.bot = v; B.newTok = ''; } if (k === 'newbot') B.newTok = ' '; if (k === 'approve') B.approve = v; redraw(); };
+  window.fbFrom = (k) => { const f = B.flows.list[k]; const src = f ? f : TPL[k]; if (!src) return; B.flow.steps = clone(src.steps); if (f) { B.flow.lang = f.lang || 'en'; B.flow.supportReply = f.supportReply || B.flow.supportReply; } else B.flow.lang = 'en'; B.from = k; B.dirty = false; draw(); play(); };
+  window.fbAdd = () => { B.flow.steps.push({text: '', buttons: []}); B.dirty = true; redraw(); };
+  window.fbDel = (i) => { B.flow.steps.splice(i, 1); B.dirty = true; redraw(); };
+  window.fbMove = (i, d) => { const a = B.flow.steps, j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; B.dirty = true; redraw(); };
+  window.fbBAdd = (i) => { (B.flow.steps[i].buttons = B.flow.steps[i].buttons || []).push({label: '🚀 Launch my AI now', action: 'app'}); B.dirty = true; redraw(); };
+  window.fbBDel = (i, j) => { B.flow.steps[i].buttons.splice(j, 1); B.dirty = true; redraw(); };
+  window.fbGo = (d) => {
+    if (d > 0 && B.step === 2) { if (!B.name.trim()) return toast('Give the funnel a name'); if (B.newTok !== '' && !/^\d{5,}:[\w-]{30,}$/.test(B.newTok.trim())) return toast('Paste the full bot token from @BotFather'); if (B.type === 'join' && !B.channel) return toast('Add the channel (@name or -100…)'); }
+    B.step = Math.max(1, Math.min(3, B.step + d)); draw(); play(); };
+  window.fbTest = async () => { try { await api('/api/admin/flows', {op: 'test', flow: {...B.flow, name: B.flow.name || B.name || 'Test'}}); toast('Sent to your Telegram'); } catch (e) { toast(String(e.message).includes('connect') ? 'Connect your Telegram in My alerts first' : e.message); } };
+  window.fbSave = async () => {
+    const btn = document.getElementById('fbSave'); if (btn) btn.disabled = true;
+    try {
+      if (B.mode === 'flow') { const d = await api('/api/admin/flows', {op: 'save', key: B.flowKey, flow: {...B.flow, name: B.flow.name || 'Flow'}}); toast('Saved'); fbClose(); if (window.loadFlows) loadFlows(); return; }
+      let bot = B.bot, note = '';
+      if (B.newTok !== '' && B.newTok.trim()) { const d = await api('/api/admin/bots/add', {token: B.newTok.trim(), lang: B.lang}); bot = d.bot.id; note = d.next; }
+      let flowKey = '';
+      if (B.type !== 'direct') {
+        if (!B.dirty && B.flows.list[B.from]) flowKey = B.from;
+        else { const d = await api('/api/admin/flows', {op: 'save', key: '', flow: {...B.flow, name: (B.name || 'Funnel') + ' · welcome'}}); flowKey = d.key; }
+      }
+      let slug = slugOf(B.name) || 'funnel'; if (FN.funnels.some((f) => f.slug === slug)) slug = (slug.slice(0, 24) + '-' + Date.now().toString(36).slice(-4));
+      const fv = foVal('fbF'); if (fv) B.follow = fv;
+      const d = await api('/api/admin/funnels/save', {edit: false, slug, name: B.name.trim(), lang: B.lang, type: B.type, bot: +bot || 0, flow: flowKey, follow: B.type === 'direct' ? undefined : B.follow, channel_id: B.type === 'join' ? B.channel : '', approve: B.approve, approve_delay: +B.delay || 60, note: ''});
+      fbClose(); toast('Funnel created'); await loadFunnels(); fnLinks(d.funnel ? d.funnel.slug : slug);
+      if (note) setTimeout(() => { if (window.alert) alert('Bot connected. Next: ' + note); }, 300);
+    } catch (e) { toast(e.message); if (btn) btn.disabled = false; }
+  };
+})();
+
+</script></body></html>
